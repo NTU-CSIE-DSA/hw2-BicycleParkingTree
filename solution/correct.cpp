@@ -1,11 +1,15 @@
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <ios>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
 #include <stdbool.h>
+#include <inttypes.h>
+#include <assert.h>
 
 enum Operation {
   PARK = 0,
@@ -16,30 +20,21 @@ enum Operation {
   REBUILD = 5
 };
 
-int64_t gcd(int64_t a, int64_t b) {
-  int64_t tp = a % b;
-  while(tp != 0) {
-    a = b;
-    b = tp;
-    tp = a % b;
-  }
-  return b;
-}
-
-int lcm(int64_t a, int64_t b) {
-  return a / gcd(a, b) * b;
-}
+int64_t gcd(int64_t a, int64_t b);
+int64_t lcm(int64_t a, int64_t b);
 
 struct rational {
   int64_t p, q;
 };
 
-void rat_simplify(struct rational *num);
-struct rational rat_add(struct rational *a, struct rational *b);
-struct rational rat_sub(struct rational *a, struct rational *b);
-struct rational rat_mul(struct rational *a, struct rational *b);
-struct rational rat_div(struct rational *a, struct rational *b);
-int rat_cmp(struct rational *a, struct rational *b);
+struct rational rational_new(int64_t p, int64_t q);
+struct rational rational_from(int64_t p);
+void rational_simplify(struct rational *num);
+struct rational rational_add(struct rational *a, struct rational *b);
+struct rational rational_sub(struct rational *a, struct rational *b);
+struct rational rational_mul(struct rational *a, struct rational *b);
+struct rational rational_div(struct rational *a, struct rational *b);
+int rational_cmp(struct rational *a, struct rational *b);
 
 struct cds_array {
   char *data;
@@ -73,6 +68,8 @@ struct bicycle {
   int owner;
 };
 
+int bicycle_cmp(const void *a, const void *b);
+
 struct parking_slot {
   struct cds_array bicycles;
   size_t capacity;
@@ -80,17 +77,33 @@ struct parking_slot {
 
 struct parking_slot parking_slot_new(size_t capacity);
 void parking_slot_delete(struct parking_slot *slot);
-int parking_slot_insert(struct parking_slot *slot, size_t target_location);
-struct rational parking_slot_erase(struct parking_slot *slot, int target_id);
+struct rational parking_slot_insert(struct parking_slot *slot, size_t target_location);
+int parking_slot_erase(struct parking_slot *slot, int target_id);
+
+struct edge {
+  size_t to;
+  int64_t dis;
+};
 
 struct bicycle_parking_tree {
+  size_t n, m;
+  struct parking_slot *parking_slots;
   struct cds_array *edges;
-  struct cds_array parking_slots;
+  int64_t *fetch_delay;
   int64_t *dis_from_root;
   struct cds_heap chuiyuan;
 };
 
+struct bicycle_parking_tree bicycle_parking_tree_new(size_t n, size_t m);
+void bicycle_parking_tree_delete(struct bicycle_parking_tree *parking_tree);
 
+void park(struct bicycle_parking_tree *parking_tree, size_t x, size_t p);
+void move(struct bicycle_parking_tree *parking_tree, size_t x, size_t y, size_t p);
+void clear(struct bicycle_parking_tree *parking_tree, size_t x, int64_t t);
+void rearrange(struct bicycle_parking_tree *parking_tree, size_t x, int64_t t);
+void fetch(struct bicycle_parking_tree *parking_tree, int64_t t);
+void rebuild(struct bicycle_parking_tree *parking_tree, size_t x, size_t y, int64_t d);
+void handle_commands(struct bicycle_parking_tree *parking_tree, size_t q);
 
 /*
 ************************************
@@ -103,11 +116,62 @@ struct bicycle_parking_tree {
 ************************************
 */
 int main(void) {
-  ;
+  // Read first line: scale
+  size_t n, m, q;
+  assert(scanf("%zu%zu%zu", &n, &m, &q) == 3);
+  struct bicycle_parking_tree parking_tree = bicycle_parking_tree_new(n, m);
+  // Read second line: capacity for each slot
+  for (int i = 0; i < n; ++i) {
+    size_t capacity;
+    assert(scanf("%zu", &capacity) == 1);
+    parking_tree.parking_slots[i] = parking_slot_new(capacity);
+  }
+  // Read third line: fetch delay for each student
+  for (int i = 0; i < m; ++i) {
+    assert(scanf("%" SCNd64, &parking_tree.fetch_delay[i]) == 1);
+  }
+  // Read tree
+  for (int i = 0; i < n - 1; ++i) {
+    size_t x, y;
+    int64_t w;
+    assert(scanf("%zu%zu%" SCNd64, &x, &y, &w) == 3);
+    struct edge toy = {.to = y, .dis = w};
+    cds_array_push_back(&parking_tree.edges[x], (void*) &toy);
+    struct edge tox = {.to = x, .dis = w};
+    cds_array_push_back(&parking_tree.edges[y], (void*) &tox);
+  }
+
+  handle_commands(&parking_tree, q);
+  bicycle_parking_tree_delete(&parking_tree);
 }
 
 
-void rat_simplify(struct rational *num) {
+int64_t gcd(int64_t a, int64_t b) {
+  int64_t tp = a % b;
+  while(tp != 0) {
+    a = b;
+    b = tp;
+    tp = a % b;
+  }
+  return b;
+}
+
+int64_t lcm(int64_t a, int64_t b) {
+  return a / gcd(a, b) * b;
+}
+
+
+struct rational rational_new(int64_t p, int64_t q) {
+  struct rational new_rational = {p, q};
+  return new_rational;
+}
+
+struct rational rational_from(int64_t p) {
+  struct rational new_rational = {p, 1};
+  return new_rational;
+}
+
+void rational_simplify(struct rational *num) {
   if(num->q == 0) num->q = 1;
   int64_t GCD = gcd(num->p, num->q);
   num->p /= GCD;
@@ -118,41 +182,41 @@ void rat_simplify(struct rational *num) {
   }
 }
 
-struct rational rat_add(struct rational *a, struct rational *b) {
+struct rational rational_add(struct rational *a, struct rational *b) {
   struct rational ret = {a->p, a->q};
   int64_t LCM = lcm(ret.q, b->q);
   ret.p *= LCM / ret.q;
   ret.q = LCM;
   b->p *= LCM / b->q;
   ret.p += b->p;
-  rat_simplify(&ret);
+  rational_simplify(&ret);
   return ret;
 }
 
-struct rational rat_sub(struct rational *a, struct rational *b) {
+struct rational rational_sub(struct rational *a, struct rational *b) {
   struct rational ret = {a->p, a->q};
   int64_t LCM = lcm(ret.q, b->q);
   ret.p *= LCM / ret.q;
   ret.q = LCM;
   b->p *= LCM / b->q;
   ret.p -= b->p;
-  rat_simplify(&ret);
+  rational_simplify(&ret);
   return ret;
 }
 
-struct rational rat_mul(struct rational *a, struct rational *b) {
+struct rational rational_mul(struct rational *a, struct rational *b) {
   struct rational ret = {a->p * b->p, a->q * b->q};
-  rat_simplify(&ret);
+  rational_simplify(&ret);
   return ret;
 }
 
-struct rational rat_div(struct rational *a, struct rational *b) {
+struct rational rational_div(struct rational *a, struct rational *b) {
   struct rational ret = {a->p * b->q, a->q * b->p};
-  rat_simplify(&ret);
+  rational_simplify(&ret);
   return ret;
 }
 
-int rat_cmp(struct rational *a, struct rational *b) {
+int rational_cmp(struct rational *a, struct rational *b) {
   if (a->p == b->p && a->q == b->q) {
     return 0;
   }
@@ -217,6 +281,21 @@ size_t cds_array_size(const struct cds_array *array) {
 
 bool cds_array_empty(const struct cds_array *array) {
   return array->size == 0;
+}
+
+
+int bicycle_cmp(const void *a, const void *b) {
+  struct bicycle *ba = (struct bicycle*) a;
+  struct bicycle *bb = (struct bicycle*) b;
+  int location_cmp_ret = rational_cmp(&ba->location, &bb->location);
+  if (location_cmp_ret != 0) {
+    return location_cmp_ret;
+  }
+  if (ba->owner == bb->owner) {
+    fprintf(stderr, "there should not be two bicycles that owned by a person\n");
+    exit(-1);
+  }
+  return ba->owner < bb->owner ? -1 : 1;
 }
 
 
@@ -327,4 +406,131 @@ void parking_slot_delete(struct parking_slot *slot) {
   slot->capacity = 0;
 }
 
-int parking_slot_insert(struct parking_slot *slot, size_t target_location);
+struct rational parking_slot_insert(struct parking_slot *slot, size_t target_location) {
+  struct rational r_target = { .p = target_location, .q = 1 };
+  int occupied[24] = {0};
+  int min_index = -1;
+  struct rational min_dis = { .p = 1000000000, .q = 1 };
+  for (int i = 0; i < cds_array_size(&slot->bicycles); ++i) {
+    struct bicycle *b = (struct bicycle*) cds_array_at(&slot->bicycles, i);
+    if (b->location.q == 1) {
+      occupied[b->location.p] = 1;
+      struct rational dis = rational_sub(&b->location, &r_target);
+      if (rational_cmp(&b->location, &r_target) != 0 && rational_cmp(&dis, &min_dis) < 0) {
+        min_index = i;
+        min_dis = dis;
+      }
+    }
+  }
+  if (!occupied[target_location]) {
+    for (int i = 0; i < cds_array_size(&slot->bicycles); ++i) {
+      const struct bicycle *b = (struct bicycle*) cds_array_at(&slot->bicycles, i);
+      if (b->location.q == 1) {
+        occupied[b->location.p] = 1;
+      }
+    }
+  }
+  bool find_vacancy = false;
+  for (int i = 1; i <= slot->capacity; ++i) {
+    if (!occupied[i]) {
+      find_vacancy = true;
+      break;
+    }
+  }
+  if (find_vacancy) {
+    ;
+  } else {
+    ;
+  }
+}
+
+int parking_slot_erase(struct parking_slot *slot, int target_id);
+
+
+struct bicycle_parking_tree bicycle_parking_tree_new(size_t n, size_t m) {
+  struct bicycle_parking_tree new_parking_tree = {
+    .n = n,
+    .m = m,
+    .parking_slots = (struct parking_slot*) malloc(sizeof(struct parking_slot) * n),
+    .edges = (struct cds_array*) malloc(sizeof(struct cds_array) * n),
+    .fetch_delay = (int64_t*) malloc(sizeof(int64_t) * m),
+    .dis_from_root = (int64_t*) malloc(sizeof(int64_t) * m),
+    .chuiyuan = cds_heap_new(sizeof(struct bicycle), bicycle_cmp)};
+  for (int i = 0; i < n; ++i) {
+    new_parking_tree.edges[i] = cds_array_new(sizeof(struct edge));
+  }
+  return new_parking_tree;
+}
+
+void bicycle_parking_tree_delete(struct bicycle_parking_tree *parking_tree) {
+  for (int i = 0; i < parking_tree->n; ++i) {
+    parking_slot_delete(&parking_tree->parking_slots[i]);
+  }
+  free(parking_tree->parking_slots);
+  for (int i = 0; i < parking_tree->n; ++i) {
+    cds_array_delete(&parking_tree->edges[i]);
+  }
+  free(parking_tree->edges);
+  free(parking_tree->fetch_delay);
+  free(parking_tree->dis_from_root);
+  cds_heap_delete(&parking_tree->chuiyuan);
+}
+
+
+void park(struct bicycle_parking_tree *parking_tree, size_t x, size_t p);
+void move(struct bicycle_parking_tree *parking_tree, size_t x, size_t y, size_t p);
+void clear(struct bicycle_parking_tree *parking_tree, size_t x, int64_t t);
+void rearrange(struct bicycle_parking_tree *parking_tree, size_t x, int64_t t);
+void fetch(struct bicycle_parking_tree *parking_tree, int64_t t);
+void rebuild(struct bicycle_parking_tree *parking_tree, size_t x, size_t y, int64_t d);
+void handle_commands(struct bicycle_parking_tree *parking_tree, size_t q);
+
+void handle_commands(struct bicycle_parking_tree *parking_tree, size_t q) {
+  for (int i = 0; i < q; ++i) {
+    Operation op;
+    assert(scanf("%u", &op) == 1);
+    switch (op) {
+      case PARK: {
+        size_t x, p;
+        assert(scanf("%zu%zu", &x, &p) == 2);
+        park(parking_tree, x, p);
+        break;
+      }
+      case MOVE: {
+        size_t x, y, p;
+        assert(scanf("%zu%zu%zu", &x, &y, &p) == 3);
+        move(parking_tree, x, y, p);
+        break;
+      }
+      case CLEAR: {
+        size_t x;
+        int64_t t;
+        assert(scanf("%zu%" SCNd64, &x, &t) == 2);
+        clear(parking_tree, x, t);
+        break;
+      }
+      case REARRANGE: {
+        size_t x;
+        int64_t t;
+        assert(scanf("%zu%" SCNd64, &x, &t) == 2);
+        rearrange(parking_tree, x, t);
+        break;
+      }
+      case FETCH: {
+        int64_t t;
+        assert(scanf("%" SCNd64, &t) == 1);
+        fetch(parking_tree, t);
+        break;
+      }
+      case REBUILD: {
+        size_t x, y;
+        assert(scanf("%zu%zu", &x, &y) == 2);
+        break;
+      }
+      default: {
+        fprintf(stderr, "invalid operation type");
+        exit(-1);
+      }
+    }
+  }
+}
