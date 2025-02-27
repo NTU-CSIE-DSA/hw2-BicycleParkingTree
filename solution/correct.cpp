@@ -1,8 +1,3 @@
-#include <cstddef>
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
 #include <math.h>
 #include <stdio.h>
 #include <stdint.h>
