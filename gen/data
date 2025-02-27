@@ -1,5 +1,12 @@
 @subtask samples
-copy ../public/examples/01.in
+copy manual 0-01.in
+copy manual 0-02.in
+copy manual 1-01.in
+copy manual 1-02.in
+copy manual 2-01.in
+copy manual 2-02.in
+copy manual 3-01.in
+copy manual 3-02.in
 
 @subtask full
 @include samples

@@ -17,5 +17,5 @@
 
 ## Test 3
 
-- Bicycle parking slots form a list.
+- Bicycle parking slots form a tree.
 - Only operation 1, 2, 3, 4, 5 present.

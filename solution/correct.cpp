@@ -149,7 +149,7 @@ int main(void) {
     assert(scanf("%" SCNd64, &parking_tree.fetch_delay[i]) == 1);
   }
   // Read tree
-  for (int i = 0; i < n - 1; ++i) {
+  for (int i = 0; i < (int) n - 1; ++i) {
     size_t x, y;
     int64_t w;
     assert(scanf("%zu%zu%" SCNd64, &x, &y, &w) == 3);
@@ -158,7 +158,7 @@ int main(void) {
     struct edge tox = { .to = x, .dis = w };
     cds_array_push_back(&parking_tree.edges[y], (void*) &tox);
   }
-  bicycle_parking_tree_find_parent(&parking_tree, 1, 1, 0);
+  bicycle_parking_tree_find_parent(&parking_tree, 0, 0, 0);
   bicycle_parking_tree_build_ancestor(&parking_tree);
 
   handle_commands(&parking_tree, q);
@@ -586,7 +586,7 @@ struct bicycle_parking_tree bicycle_parking_tree_new(size_t n, size_t m) {
     .parking_slots = (struct parking_slot*) malloc(sizeof(struct parking_slot) * n),
     .edges = (struct cds_array*) malloc(sizeof(struct cds_array) * n),
     .fetch_delay = (int64_t*) malloc(sizeof(int64_t) * m),
-    .dis_from_root = (int64_t*) malloc(sizeof(int64_t) * m),
+    .dis_from_root = (int64_t*) malloc(sizeof(int64_t) * n),
     .depth = (int*) malloc(sizeof(int) * n),
     .chuiyuan = cds_heap_new(sizeof(struct chuiyuan_info), chuiyuan_info_cmp)};
   for (int i = 0; i < n; ++i) {
@@ -662,7 +662,8 @@ size_t bicycle_parking_tree_find_lca(struct bicycle_parking_tree *parking_tree, 
 
 int64_t bicycle_parking_tree_find_dis(struct bicycle_parking_tree *parking_tree, size_t from, size_t to) {
   size_t lca = bicycle_parking_tree_find_lca(parking_tree, from, to);
-  return parking_tree->dis_from_root[from] + parking_tree->dis_from_root[to] - parking_tree->dis_from_root[lca];
+  return parking_tree->dis_from_root[from] + parking_tree->dis_from_root[to]
+    - 2 * parking_tree->dis_from_root[lca];
 }
 
 
@@ -723,7 +724,6 @@ void fetch(struct bicycle_parking_tree *parking_tree, int64_t t) {
   int fetched = 0;
   while (cds_heap_size(&parking_tree->chuiyuan) > 0 && 
       ((struct chuiyuan_info*) cds_heap_top(&parking_tree->chuiyuan))->t <= t) {
-    printf("%" SCNd64 " ", ((struct chuiyuan_info*) cds_heap_top(&parking_tree->chuiyuan))->t);
     fetched++;
     cds_heap_pop(&parking_tree->chuiyuan);
   }
