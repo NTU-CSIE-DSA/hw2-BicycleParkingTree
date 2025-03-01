@@ -36,21 +36,34 @@ gen_sub1 300 300 1000 yyy
 gen_sub1 300 300 1000 yyyyy
 
 @testset 2_public
+gen_sub23 1 10 10 aka
+gen_sub23 5 100 100 find
+gen_sub23 5 300 1000 park
+gen_sub23 10 300 1000 move
+gen_sub23 50 300 1000 rearrange
+gen_sub23 100 300 1000 (`w`)
+gen_sub23 300 300 1000 ==
 
 @testset 2_private
+gen_sub23 1 10 10 kak
 
 @testset 3_public
+gen_sub23 300 1000 1000 OAO 
 
 @testset 3_private
+gen_sub23 300 1000 1000 OAOO
 
 @testset 4_public
+gen_sub4 100 1000 1000 int
 
 @testset 4_private
+gen_sub4 100 1000 1000 float
 
 @testset 5_public
+gen_sub5 10000 100000 100000 bonus
 
 @testset 5_private
-
+gen_sub5 10000 100000 100000 bonusbonus
 
 @testset 1
 @include 1_public
@@ -78,10 +91,11 @@ gen_sub1 300 300 1000 yyyyy
 @include sample3
 @include sample4
 
-@subtask 1
+@subtask subtask1
+@include sample2
 @include 1
 
-@subtask 2
+@subtask subtask2
 @include sample1
 @include sample2
 @include sample3
@@ -89,7 +103,7 @@ gen_sub1 300 300 1000 yyyyy
 @include 1
 @include 2
 
-@subtask 3
+@subtask subtask3
 @include sample1
 @include sample2
 @include sample3
@@ -98,7 +112,7 @@ gen_sub1 300 300 1000 yyyyy
 @include 2
 @include 3
 
-@subtask 4
+@subtask subtask4
 @include sample1
 @include sample2
 @include sample3
@@ -108,7 +122,7 @@ gen_sub1 300 300 1000 yyyyy
 @include 3
 @include 4
 
-@subtask 5
+@subtask subtask5
 @include sample1
 @include sample2
 @include sample3

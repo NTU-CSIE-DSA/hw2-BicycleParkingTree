@@ -1,7 +1,7 @@
 {
     "name": "bicycletree",
     "code": "bicycletree",
-    "title": "[HW2-P4]Bicycle Parking Tree",
+    "title": "[HW2-P4] Bicycle Parking Tree",
     "type": "Batch",
     "has_grader": false,
     "java_enabled": false,
