@@ -1,15 +1,120 @@
-@subtask samples
-copy manual 0-01.in
-copy manual 0-02.in
-copy manual 1-01.in
-copy manual 1-02.in
-copy manual 2-01.in
-copy manual 2-02.in
-copy manual 3-01.in
-copy manual 3-02.in
+@testset sample1
+manual 0-02.in
 
-@subtask full
-@include samples
-manual small-1.in
-gen1	20
-gen1	30
+@testset sample2
+manual 1-02.in
+
+@testset sample3
+manual 2-02.in
+
+@testset sample4
+manual 3-02.in
+
+@testset 1_public
+gen_sub1 1 10 10 OwO
+gen_sub1 5 100 100 abc
+gen_sub1 5 300 1000 acb
+gen_sub1 10 300 1000 OAO
+gen_sub1 50 300 1000 030
+gen_sub1 100 300 1000 XDD
+gen_sub1 300 300 1000 www
+
+@testset 1_private
+gen_sub1 1 5 10 jngen
+gen_sub1 1 5 10 jng
+gen_sub1 5 100 100 pop
+gen_sub1 5 100 100 popop
+gen_sub1 5 300 1000 cds
+gen_sub1 5 300 1000 cdsds
+gen_sub1 10 300 1000 push
+gen_sub1 10 300 1000 pushsh
+gen_sub1 50 300 1000 aka
+gen_sub1 50 300 1000 akaka
+gen_sub1 100 300 1000 ttt
+gen_sub1 100 300 1000 ttttt
+gen_sub1 300 300 1000 yyy
+gen_sub1 300 300 1000 yyyyy
+
+@testset 2_public
+
+@testset 2_private
+
+@testset 3_public
+
+@testset 3_private
+
+@testset 4_public
+
+@testset 4_private
+
+@testset 5_public
+
+@testset 5_private
+
+
+@testset 1
+@include 1_public
+@include 1_private
+
+@testset 2
+@include 2_public
+@include 2_private
+
+@testset 3
+@include 3_public
+@include 3_private
+
+@testset 4
+@include 4_public
+@include 4_private
+
+@testset 5
+@include 5_public
+@include 5_private
+
+@subtask samples
+@include sample1
+@include sample2
+@include sample3
+@include sample4
+
+@subtask 1
+@include 1
+
+@subtask 2
+@include sample1
+@include sample2
+@include sample3
+@include sample4
+@include 1
+@include 2
+
+@subtask 3
+@include sample1
+@include sample2
+@include sample3
+@include sample4
+@include 1
+@include 2
+@include 3
+
+@subtask 4
+@include sample1
+@include sample2
+@include sample3
+@include sample4
+@include 1
+@include 2
+@include 3
+@include 4
+
+@subtask 5
+@include sample1
+@include sample2
+@include sample3
+@include sample4
+@include 1
+@include 2
+@include 3
+@include 4
+@include 5

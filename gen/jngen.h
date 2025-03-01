@@ -26,6 +26,7 @@
 
   Follow the same link for docs and reference.
 */
+#pragma once
 
 #define JNGEN_VERSION 0.1
 

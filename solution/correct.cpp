@@ -148,6 +148,7 @@ int main(void) {
     size_t x, y;
     int64_t w;
     assert(scanf("%zu%zu%" SCNd64, &x, &y, &w) == 3);
+    fprintf(stderr, "edge: %zu, %zu, %" SCNd64 "\n", x, y, w);
     struct edge toy = { .to = y, .dis = w };
     cds_array_push_back(&parking_tree.edges[x], (void*) &toy);
     struct edge tox = { .to = x, .dis = w };
@@ -453,7 +454,7 @@ void parking_slot_delete(struct parking_slot *slot) {
 }
 
 struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t target_location) {
-  struct rational r_target = { .p = target_location, .q = 1 };
+  struct rational r_target = { .p = (int64_t) target_location, .q = 1 };
   int occupied[24] = {0};
   //* We want to find:
   //*
@@ -485,7 +486,7 @@ struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t
   //* If the parking slot has empty space at p, the student park zir bicycle at p.
   if (!occupied[target_location]) {
     struct bicycle new_bicycle = {
-      .location = {target_location, 1},
+      .location = {(int64_t) target_location, 1},
       .owner = owner,};
     if (smallest_right_index == -1) {
       cds_array_push_back(&slot->bicycles, (void*) &new_bicycle);

@@ -205,7 +205,7 @@ void parking_slot_delete(struct parking_slot *slot) {
   slot->capacity = 0;
 }
 struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t target_location) {
-  struct rational r_target = { .p = target_location, .q = 1 };
+  struct rational r_target = { .p = (int64_t) target_location, .q = 1 };
   int occupied[24] = {0};
   int min_index = -1, target_index = -1, smallest_right_index = -1;
   struct rational min_dis = { .p = 64, .q = 1 };
@@ -223,7 +223,7 @@ struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t
     if (rational_cmp(&b->location, &r_target) > 0 && smallest_right_index == -1) smallest_right_index = i;
   }
   if (!occupied[target_location]) {
-    struct bicycle new_bicycle = { { target_location, 1 }, owner };
+    struct bicycle new_bicycle = { { (int64_t)target_location, 1 }, owner };
     if (smallest_right_index == -1) 
       cds_array_push_back(&slot->bicycles, (void*) &new_bicycle);
     else 
