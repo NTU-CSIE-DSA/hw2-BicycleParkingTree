@@ -92,6 +92,7 @@ struct chuiyuan_info {
 
 int chuiyuan_info_cmp(void *a, void *b);
 
+#define LCA_LAYER 19
 struct bicycle_parking_tree {
   size_t n, m;
   struct parking_slot *parking_slots;
@@ -99,7 +100,8 @@ struct bicycle_parking_tree {
   int64_t *fetch_delay;
   int64_t *dis_from_root;
   int *depth;
-  size_t *ancestor[20];
+  size_t *previous_slot;
+  size_t *ancestor[LCA_LAYER];
   struct cds_heap chuiyuan;
 };
 
@@ -584,11 +586,12 @@ struct bicycle_parking_tree bicycle_parking_tree_new(size_t n, size_t m) {
     .fetch_delay = (int64_t*) malloc(sizeof(int64_t) * m),
     .dis_from_root = (int64_t*) malloc(sizeof(int64_t) * n),
     .depth = (int*) malloc(sizeof(int) * n),
+    .previous_slot = (size_t*) calloc(m, sizeof(size_t)),
     .chuiyuan = cds_heap_new(sizeof(struct chuiyuan_info), chuiyuan_info_cmp)};
   for (int i = 0; i < n; ++i) {
     new_parking_tree.edges[i] = cds_array_new(sizeof(struct edge));
   }
-  for (int i = 0; i < 20; ++i) {
+  for (int i = 0; i < LCA_LAYER; ++i) {
     new_parking_tree.ancestor[i] = (size_t*) malloc(sizeof(size_t) * n);
   }
   return new_parking_tree;
@@ -606,7 +609,8 @@ void bicycle_parking_tree_delete(struct bicycle_parking_tree *parking_tree) {
   free(parking_tree->fetch_delay);
   free(parking_tree->dis_from_root);
   free(parking_tree->depth);
-  for (int i = 0; i < 20; ++i) {
+  free(parking_tree->previous_slot);
+  for (int i = 0; i < LCA_LAYER; ++i) {
     free(parking_tree->ancestor[i]);
   }
   cds_heap_delete(&parking_tree->chuiyuan);
@@ -624,7 +628,7 @@ void bicycle_parking_tree_find_parent(struct bicycle_parking_tree *parking_tree,
 }
 
 void bicycle_parking_tree_build_ancestor(struct bicycle_parking_tree *parking_tree) {
-  for (int i = 1; i < 20; ++i) {
+  for (int i = 1; i < LCA_LAYER; ++i) {
     for (int j = 0; j < parking_tree->n; ++j) {
       parking_tree->ancestor[i][j] = parking_tree->ancestor[i - 1][parking_tree->ancestor[i - 1][j]];
     }
@@ -637,7 +641,7 @@ size_t bicycle_parking_tree_find_lca(struct bicycle_parking_tree *parking_tree, 
     u = v;
     v = tp;
   }
-  for (int i = 20 - 1; i >= 0; --i) {
+  for (int i = LCA_LAYER - 1; i >= 0; --i) {
     if (parking_tree->depth[parking_tree->ancestor[i][u]] >= parking_tree->depth[v]) {
       u = parking_tree->ancestor[i][u];
     }
@@ -646,7 +650,7 @@ size_t bicycle_parking_tree_find_lca(struct bicycle_parking_tree *parking_tree, 
   if (u == v) {
     return u;
   }
-  for (int i = 20 - 1; i >= 0; --i) {
+  for (int i = LCA_LAYER - 1; i >= 0; --i) {
     if (parking_tree->ancestor[i][u] != parking_tree->ancestor[i][v]) {
       u = parking_tree->ancestor[i][u];
       v = parking_tree->ancestor[i][v];
@@ -665,6 +669,7 @@ int64_t bicycle_parking_tree_find_dis(struct bicycle_parking_tree *parking_tree,
 
 void park(struct bicycle_parking_tree *parking_tree, int s, size_t x, size_t p) {
   struct rational final_position = parking_slot_insert(&parking_tree->parking_slots[x], s, p);
+  parking_tree->previous_slot[s] = x;
   printf("%d parked at (%zu, ", s, x);
   if (final_position.q == 1) {
     printf("%" SCNd64, final_position.p);
@@ -674,7 +679,8 @@ void park(struct bicycle_parking_tree *parking_tree, int s, size_t x, size_t p) 
   printf(").\n");
 }
 
-void move(struct bicycle_parking_tree *parking_tree, int s, size_t x, size_t y, size_t p) {
+void move(struct bicycle_parking_tree *parking_tree, int s, size_t y, size_t p) {
+  const size_t x = parking_tree->previous_slot[s];
   parking_slot_erase(&parking_tree->parking_slots[x], s);
   const int64_t t = bicycle_parking_tree_find_dis(parking_tree, x, y);
   printf("%d moved to %zu in %" SCNd64 " seconds.\n", s, y, t);
@@ -735,21 +741,19 @@ void handle_commands(struct bicycle_parking_tree *parking_tree, size_t q) {
   for (int i = 0; i < q; ++i) {
     Operation op;
     assert(scanf("%u", &op) == 1);
-    // printf("operation: %u\n", op);
     switch (op) {
       case PARK: {
         int s;
         size_t x, p;
         assert(scanf("%d%zu%zu", &s, &x, &p) == 3);
-        // printf("s: %d, x: %zu, p: %zu\n", s, x, p);
         park(parking_tree, s, x, p);
         break;
       }
       case MOVE: {
         int s;
-        size_t x, y, p;
-        assert(scanf("%d%zu%zu%zu", &s, &x, &y, &p) == 4);
-        move(parking_tree, s, x, y, p);
+        size_t y, p;
+        assert(scanf("%d%zu%zu", &s, &y, &p) == 3);
+        move(parking_tree, s, y, p);
         break;
       }
       case CLEAR: {

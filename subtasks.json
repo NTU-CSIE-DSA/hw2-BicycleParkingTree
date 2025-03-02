@@ -9,7 +9,7 @@
         "subtask1": {
             "index": 1,
             "score": 10,
-            "validators": []
+            "validators": ["val_sub1.cpp"]
         },
         "subtask2": {
             "index": 2,
