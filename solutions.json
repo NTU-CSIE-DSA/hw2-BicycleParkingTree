@@ -1,3 +1,4 @@
 {
-    "correct.cpp": { "verdict": "model_solution" }
+    "bonus.cpp": { "verdict": "model_solution" },
+    "correct.cpp": { "verdict": "partially_correct" }
 }

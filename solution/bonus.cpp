@@ -1,3 +1,4 @@
+#include <cstddef>
 #include <math.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -116,7 +117,7 @@ struct bicycle_parking_tree bicycle_parking_tree_new(size_t n, size_t m);
 void bicycle_parking_tree_delete(struct bicycle_parking_tree *parking_tree);
 void bicycle_parking_tree_find_parent(struct bicycle_parking_tree *parking_tree, int now, int parent);
 void bicycle_parking_tree_build_chain(struct bicycle_parking_tree *parking_tree, int now, int parent);
-size_t bicycle_parking_tree_find_lca(struct bicycle_parking_tree *parking_tree, size_t u, size_t v);
+void bicycle_parking_tree_build_bit(struct bicycle_parking_tree *parking_tree, int now, int parent);
 int64_t bicycle_parking_tree_find_dis(struct bicycle_parking_tree *parking_tree, size_t from, size_t to);
 
 void park(struct bicycle_parking_tree *parking_tree, int s, size_t x, size_t p);
@@ -157,14 +158,15 @@ int main(void) {
     size_t x, y;
     int64_t w;
     assert(scanf("%zu%zu%" SCNd64, &x, &y, &w) == 3);
-    fprintf(stderr, "edge: %zu, %zu, %" SCNd64 "\n", x, y, w);
     struct edge toy = { .to = y, .dis = w };
     cds_array_push_back(&parking_tree.edges[x], (void*) &toy);
     struct edge tox = { .to = x, .dis = w };
     cds_array_push_back(&parking_tree.edges[y], (void*) &tox);
   }
   bicycle_parking_tree_find_parent(&parking_tree, 0, 0);
-
+  bicycle_parking_tree_build_chain(&parking_tree, 0, 0);
+  bicycle_parking_tree_build_bit(&parking_tree, 0, 0);
+  
   handle_commands(&parking_tree, q);
   bicycle_parking_tree_delete(&parking_tree);
 }
@@ -622,6 +624,7 @@ struct bicycle_parking_tree bicycle_parking_tree_new(size_t n, size_t m) {
     .parent = (int*) malloc(sizeof(int) * n),
     .link = (int*) malloc(sizeof(int) * n),
     .binary_index_tree = (int64_t*) calloc(n + 1, sizeof(int64_t)),
+    .subtree_size = (int*) calloc(n, sizeof(int)),
     .depth = (int*) malloc(sizeof(int) * n),
     .previous_slot = (size_t*) calloc(m, sizeof(size_t)),
     .chuiyuan = cds_heap_new(sizeof(struct chuiyuan_info), chuiyuan_info_cmp)};
@@ -683,14 +686,25 @@ void bicycle_parking_tree_build_chain(struct bicycle_parking_tree *parking_tree,
   }
 }
 
+void bicycle_parking_tree_build_bit(struct bicycle_parking_tree *parking_tree, int now, int parent) {
+  for (size_t i = 0; i < cds_array_size(&parking_tree->edges[now]); ++i) {
+    struct edge *next = (struct edge*) cds_array_at(&parking_tree->edges[now], i);
+    if (next->to == parent) continue;
+    binary_index_tree_update(parking_tree, parking_tree->order[next->to], next->dis);
+    bicycle_parking_tree_build_bit(parking_tree, next->to, now);
+  }
+}
+
 int64_t bicycle_parking_tree_find_dis(struct bicycle_parking_tree *parking_tree, size_t from, size_t to) {
   int64_t ret = 0;
+  // fprintf(stderr, "from: %zu, to: %zu ( ", from, to);
   while (parking_tree->chain_top[from] != parking_tree->chain_top[to]) {
     if (parking_tree->depth[parking_tree->chain_top[from]] < parking_tree->depth[parking_tree->chain_top[to]]) {
       int tp = from;
       from = to;
       to = tp;
     }
+    // fprintf(stderr, "add dis from: %d, to: %zu ", parking_tree->chain_top[from], from);
     ret += binary_index_tree_range_query(parking_tree, parking_tree->order[parking_tree->chain_top[from]],
       parking_tree->order[from]);
     from = parking_tree->parent[parking_tree->chain_top[from]];
@@ -699,8 +713,10 @@ int64_t bicycle_parking_tree_find_dis(struct bicycle_parking_tree *parking_tree,
     int tp = from;
     from = to;
     to = tp;
-  };
+  }
+  // fprintf(stderr, "add dis from: %zu, to: %zu )", from, to);
   ret += binary_index_tree_range_query(parking_tree, parking_tree->order[from], parking_tree->order[to]);
+  ret -= binary_index_tree_range_query(parking_tree, parking_tree->order[from], parking_tree->order[from]);
   return ret;
 }
 
@@ -719,10 +735,15 @@ void park(struct bicycle_parking_tree *parking_tree, int s, size_t x, size_t p) 
 
 void move(struct bicycle_parking_tree *parking_tree, int s, size_t y, size_t p) {
   const size_t x = parking_tree->previous_slot[s];
+  if (x == y) {
+    printf("%d moved to %zu in 0 seconds.\n", s, y);
+    return;
+  }
   parking_slot_erase(&parking_tree->parking_slots[x], s);
   const int64_t t = bicycle_parking_tree_find_dis(parking_tree, x, y);
   printf("%d moved to %zu in %" SCNd64 " seconds.\n", s, y, t);
   parking_slot_insert(&parking_tree->parking_slots[y], s, p);
+  parking_tree->previous_slot[s] = y;
 }
 
 void clear(struct bicycle_parking_tree *parking_tree, size_t x, int64_t t) {
@@ -771,8 +792,12 @@ void fetch(struct bicycle_parking_tree *parking_tree, int64_t t) {
 }
 
 void rebuild(struct bicycle_parking_tree *parking_tree, size_t x, size_t y, int64_t d) {
-  printf("rebuild operation is not implemented in baseline solution");
-  exit(-1);
+  if (parking_tree->depth[x] > parking_tree->depth[y]) {
+    size_t tp = x;
+    x = y;
+    y = tp;
+  }
+  binary_index_tree_update(parking_tree, parking_tree->order[y], d);
 }
 
 void handle_commands(struct bicycle_parking_tree *parking_tree, size_t q) {
@@ -816,7 +841,9 @@ void handle_commands(struct bicycle_parking_tree *parking_tree, size_t q) {
       }
       case REBUILD: {
         size_t x, y;
-        assert(scanf("%zu%zu", &x, &y) == 2);
+        int64_t d;
+        assert(scanf("%zu%zu%" SCNd64, &x, &y, &d) == 3);
+        rebuild(parking_tree, x, y, d);
         break;
       }
       default: {

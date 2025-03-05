@@ -669,6 +669,7 @@ size_t bicycle_parking_tree_find_lca(struct bicycle_parking_tree *parking_tree, 
 
 int64_t bicycle_parking_tree_find_dis(struct bicycle_parking_tree *parking_tree, size_t from, size_t to) {
   size_t lca = bicycle_parking_tree_find_lca(parking_tree, from, to);
+  fprintf(stderr, "lca: %zu ", lca);
   return parking_tree->dis_from_root[from] + parking_tree->dis_from_root[to]
     - 2 * parking_tree->dis_from_root[lca];
 }
@@ -690,11 +691,13 @@ void move(struct bicycle_parking_tree *parking_tree, int s, size_t y, size_t p) 
   const size_t x = parking_tree->previous_slot[s];
   if (x == y) {
     printf("%d moved to %zu in 0 seconds.\n", s, y);
+    return;
   }
   parking_slot_erase(&parking_tree->parking_slots[x], s);
   const int64_t t = bicycle_parking_tree_find_dis(parking_tree, x, y);
   printf("%d moved to %zu in %" SCNd64 " seconds.\n", s, y, t);
-  struct rational final_position = parking_slot_insert(&parking_tree->parking_slots[y], s, p);
+  parking_slot_insert(&parking_tree->parking_slots[y], s, p);
+  parking_tree->previous_slot[s] = y;
 }
 
 void clear(struct bicycle_parking_tree *parking_tree, size_t x, int64_t t) {
