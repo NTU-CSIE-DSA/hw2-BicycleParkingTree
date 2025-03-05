@@ -1,4 +1,3 @@
-#include <cstddef>
 #include <math.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -166,7 +165,7 @@ int main(void) {
   bicycle_parking_tree_find_parent(&parking_tree, 0, 0);
   bicycle_parking_tree_build_chain(&parking_tree, 0, 0);
   bicycle_parking_tree_build_bit(&parking_tree, 0, 0);
-  
+
   handle_commands(&parking_tree, q);
   bicycle_parking_tree_delete(&parking_tree);
 }
