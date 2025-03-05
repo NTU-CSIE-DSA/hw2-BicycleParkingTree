@@ -124,9 +124,22 @@ gen_sub234 300000 300000 100000 1457414574
 
 @testset 5_public
 gen_sub5 10000 100000 100000 bonus
+gen_sub5 100000 100000 100000 bonuss
+gen_sub5 300000 100000 100000 bonusss
+gen_sub5 300000 100000 100000 bonusdss
+gen_sub5 300000 100000 100000 bonusssss
 
 @testset 5_private
-gen_sub5 10000 100000 100000 bonusbonus
+gen_sub5 10000 100000 100000 ddd
+gen_sub5 10000 100000 100000 bodddnus
+gen_sub5 100000 100000 100000 bodnuss
+gen_sub5 100000 100000 100000 bonduss
+gen_sub5 300000 100000 100000 bondudsss
+gen_sub5 300000 100000 100000 bodnusss
+gen_sub5 300000 100000 100000 boddnussss
+gen_sub5 300000 100000 100000 bodndussdss
+gen_sub5 300000 100000 100000 bondusssss
+gen_sub5 300000 100000 100000 boddnudsssss
 
 @testset 1
 @include 1_public
