@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <math.h>
 #include <stdio.h>
 #include <stdint.h>
@@ -27,10 +28,10 @@ struct rational {
 struct rational rational_new(int64_t p, int64_t q);
 struct rational rational_from(int64_t p);
 void rational_simplify(struct rational *num);
-struct rational rational_add(struct rational *a, struct rational *b);
-struct rational rational_sub(struct rational *a, struct rational *b);
-struct rational rational_mul(struct rational *a, struct rational *b);
-struct rational rational_div(struct rational *a, struct rational *b);
+struct rational rational_add(struct rational a, struct rational b);
+struct rational rational_sub(struct rational a, struct rational b);
+struct rational rational_mul(struct rational a, struct rational b);
+struct rational rational_div(struct rational a, struct rational b);
 int rational_cmp(struct rational *a, struct rational *b);
 struct rational rational_abs(struct rational a);
 
@@ -150,7 +151,6 @@ int main(void) {
     size_t x, y;
     int64_t w;
     assert(scanf("%zu%zu%" SCNd64, &x, &y, &w) == 3);
-    fprintf(stderr, "edge: %zu, %zu, %" SCNd64 "\n", x, y, w);
     struct edge toy = { .to = y, .dis = w };
     cds_array_push_back(&parking_tree.edges[x], (void*) &toy);
     struct edge tox = { .to = x, .dis = w };
@@ -200,36 +200,36 @@ void rational_simplify(struct rational *num) {
   }
 }
 
-struct rational rational_add(struct rational *a, struct rational *b) {
-  struct rational ret = {a->p, a->q};
-  int64_t LCM = lcm(ret.q, b->q);
+struct rational rational_add(struct rational a, struct rational b) {
+  struct rational ret = {a.p, a.q};
+  int64_t LCM = lcm(ret.q, b.q);
   ret.p *= LCM / ret.q;
   ret.q = LCM;
-  b->p *= LCM / b->q;
-  ret.p += b->p;
+  b.p *= LCM / b.q;
+  ret.p += b.p;
   rational_simplify(&ret);
   return ret;
 }
 
-struct rational rational_sub(struct rational *a, struct rational *b) {
-  struct rational ret = {a->p, a->q};
-  int64_t LCM = lcm(ret.q, b->q);
+struct rational rational_sub(struct rational a, struct rational b) {
+  struct rational ret = {a.p, a.q};
+  int64_t LCM = lcm(ret.q, b.q);
   ret.p *= LCM / ret.q;
   ret.q = LCM;
-  b->p *= LCM / b->q;
-  ret.p -= b->p;
+  b.p *= LCM / b.q;
+  ret.p -= b.p;
   rational_simplify(&ret);
   return ret;
 }
 
-struct rational rational_mul(struct rational *a, struct rational *b) {
-  struct rational ret = {a->p * b->p, a->q * b->q};
+struct rational rational_mul(struct rational a, struct rational b) {
+  struct rational ret = {a.p * b.p, a.q * b.q};
   rational_simplify(&ret);
   return ret;
 }
 
-struct rational rational_div(struct rational *a, struct rational *b) {
-  struct rational ret = {a->p * b->q, a->q * b->p};
+struct rational rational_div(struct rational a, struct rational b) {
+  struct rational ret = {a.p * b.q, a.q * b.p};
   rational_simplify(&ret);
   return ret;
 }
@@ -457,7 +457,7 @@ void parking_slot_delete(struct parking_slot *slot) {
 
 struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t target_location) {
   struct rational r_target = { .p = (int64_t) target_location, .q = 1 };
-  int occupied[24] = {0};
+  int occupied[32] = {0};
   //* We want to find:
   //*
   //*   1. min_index              is the bicycle nearest to the target location
@@ -471,8 +471,11 @@ struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t
   for (int i = 0; i < cds_array_size(&slot->bicycles); ++i) {
     struct bicycle *b = (struct bicycle*) cds_array_at(&slot->bicycles, i);
     if (b->location.q == 1) {
+      if (b->location.p > slot->capacity) {
+        exit(-1);
+      }
       occupied[b->location.p] = 1;
-      struct rational dis = rational_abs(rational_sub(&b->location, &r_target));
+      struct rational dis = rational_abs(rational_sub(b->location, r_target));
       if (rational_cmp(&b->location, &r_target) != 0 && rational_cmp(&dis, &min_dis) < 0) {
         min_index = i;
         min_dis = dis;
@@ -505,7 +508,7 @@ struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t
   for (int i = 1; i <= slot->capacity; ++i) {
     if (!occupied[i]) {
       struct rational current_location = { .p = i, .q = 1 };
-      struct rational current_distance = rational_abs(rational_sub(&current_location, &r_target));
+      struct rational current_distance = rational_abs(rational_sub(current_location, r_target));
       if (rational_cmp(&current_distance, &nearest_distance) < 0) {
         nearest_vacant_location = i;
         nearest_distance = current_distance;
@@ -534,18 +537,22 @@ struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t
   } else {
     struct rational location_sum;
     if (target_index != 0) {
-      location_sum = rational_add((struct rational*) cds_array_at(&slot->bicycles, target_index - 1),
-      (struct rational*) cds_array_at(&slot->bicycles, target_index));
+      location_sum = rational_add(*(struct rational*) cds_array_at(&slot->bicycles, target_index - 1),
+      *(struct rational*) cds_array_at(&slot->bicycles, target_index));
     } else {
-      location_sum = rational_add((struct rational*) cds_array_at(&slot->bicycles, target_index + 1),
-        (struct rational*) cds_array_at(&slot->bicycles, target_index));
+      location_sum = rational_add(*(struct rational*) cds_array_at(&slot->bicycles, target_index + 1),
+        *(struct rational*) cds_array_at(&slot->bicycles, target_index));
     }
-    struct rational TWO = rational_from(2);
-    struct rational mid_location = rational_div(&location_sum, &TWO);
+    struct rational mid_location = rational_div(location_sum, rational_from(2));
     struct bicycle new_bicycle = {
       .location = mid_location,
       .owner = owner};
-    cds_array_insert(&slot->bicycles, target_index, (void*) &new_bicycle);
+    struct rational cp = rational_from(slot->capacity);
+    if (target_index != 0) {
+      cds_array_insert(&slot->bicycles, target_index, (void*) &new_bicycle);
+    } else {
+      cds_array_insert(&slot->bicycles, 1, (void*) &new_bicycle);
+    }
     return new_bicycle.location;
   }
 }
@@ -681,10 +688,13 @@ void park(struct bicycle_parking_tree *parking_tree, int s, size_t x, size_t p) 
 
 void move(struct bicycle_parking_tree *parking_tree, int s, size_t y, size_t p) {
   const size_t x = parking_tree->previous_slot[s];
+  if (x == y) {
+    printf("%d moved to %zu in 0 seconds.\n", s, y);
+  }
   parking_slot_erase(&parking_tree->parking_slots[x], s);
   const int64_t t = bicycle_parking_tree_find_dis(parking_tree, x, y);
   printf("%d moved to %zu in %" SCNd64 " seconds.\n", s, y, t);
-  parking_slot_insert(&parking_tree->parking_slots[y], s, p);
+  struct rational final_position = parking_slot_insert(&parking_tree->parking_slots[y], s, p);
 }
 
 void clear(struct bicycle_parking_tree *parking_tree, size_t x, int64_t t) {
@@ -778,7 +788,8 @@ void handle_commands(struct bicycle_parking_tree *parking_tree, size_t q) {
       }
       case REBUILD: {
         size_t x, y;
-        assert(scanf("%zu%zu", &x, &y) == 2);
+        int64_t d;
+        assert(scanf("%zu%zu%" SCNd64, &x, &y, &d) == 3);
         break;
       }
       default: {

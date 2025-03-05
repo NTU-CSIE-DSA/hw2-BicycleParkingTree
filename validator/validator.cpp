@@ -3,6 +3,8 @@
 #include <vector>
 using namespace std;
 
+#define CAP_LIM(cap) (cap * 2)
+
 constexpr int kMaxN = 300000;
 constexpr int kMaxM = 300000;
 constexpr int kMaxQ = 100000;
@@ -19,6 +21,7 @@ enum Operation {
   FETCH = 4,
   REBUILD = 5
 };
+using min_heap = priority_queue<pair<int64_t, int>, vector<pair<int64_t, int>>, greater<pair<int64_t, int>>>;
 
 struct DSU{
   std::vector<int> dsu,rk;
@@ -83,8 +86,9 @@ int main(int argc, char* argv[]) {
   inf.readEoln();
 
   // Read fetch time for each student; students indexed 0..m-1.
+  vector<int> fetch_delay(m);
   for (int i = 0; i < m; i++) {
-    inf.readInt(0, kMaxL, "l[" + to_string(i) + "]");
+    fetch_delay[i] = inf.readInt(0, kMaxL, "l[" + to_string(i) + "]");
     if(i < m - 1)
       inf.readSpace();
   }
@@ -112,6 +116,27 @@ int main(int argc, char* argv[]) {
   }
 
   // Read operations
+  int64_t current_time = -1;
+	//* student_location
+	//*   1. 0~n-1, in bicycle slot
+	//*   2. -1, their home
+	//*   3. -2, chuiyuan
+	map<int, int> student_location;
+	set<int> available_students;
+	for (int i = 0; i < m; ++i) {
+		available_students.insert(i);
+	}
+
+	vector<int> slot_usage(n, 0);
+	set<int> availabile_slots;
+	for (int i = 0; i < n; ++i) {
+		availabile_slots.insert(i);
+	}
+	int bicycle_in_tree = 0;
+	
+	min_heap chuiyuan;
+	ensure(chuiyuan.empty());
+
   for (int i = 0; i < q; ++i) {
     int op = inf.readInt(0, 5, "op[" + to_string(i) + "]");
     inf.readSpace();
@@ -121,20 +146,40 @@ int main(int argc, char* argv[]) {
         inf.readSpace();
         int x = inf.readInt(0, n - 1, "x[" + to_string(i) + "]");
         inf.readSpace();
+        ensure(cap[x] * 2 > slot_usage[x]);
         int p = inf.readInt(1, cap[x], "p[" + to_string(i) + "]");
         inf.readEoln();
+				
+        slot_usage[x]++;
+				if (slot_usage[x] == CAP_LIM(cap[x])) {
+					availabile_slots.erase(x);
+				}
+				student_location[s] = x;
+				available_students.erase(s);
+				bicycle_in_tree++;
         break;
       }
       case MOVE: {
         int s = inf.readInt(0, m - 1, "s[" + to_string(i) + "]");
         inf.readSpace();
-        int x = inf.readInt(0, n - 1, "x[" + to_string(i) + "]");
-        inf.readSpace();
+        int x = student_location[s];
+        ensure(x >= 0);
         int y = inf.readInt(0, n - 1, "y[" + to_string(i) + "]");
         inf.readSpace();
-        ensure(x != y);
+        ensure(cap[y] * 2 > slot_usage[y]);
         int p = inf.readInt(1, cap[y], "p[" + to_string(i) + "]");
         inf.readEoln();
+        
+        slot_usage[x]--;
+				if (slot_usage[x] < CAP_LIM(cap[x])) {
+					availabile_slots.insert(x);
+				}
+				slot_usage[y]++;
+				if (slot_usage[y] == CAP_LIM(cap[y])) {
+					availabile_slots.erase(y);
+				}
+				student_location[s] = y;
+				ensure(available_students.count(s) == 0);
         break;
       }
       case CLEAR: {
@@ -142,6 +187,18 @@ int main(int argc, char* argv[]) {
         inf.readSpace();
         long long t = inf.readLong(0, kMaxT, "t[" + to_string(i) + "]");
         inf.readEoln();
+        
+        current_time = t;
+				for (auto [st, sl] : student_location) {
+					if (sl == x) {
+						student_location[st] = -2;
+						slot_usage[x]--;
+						chuiyuan.emplace(t + fetch_delay[st], st);
+						bicycle_in_tree--;
+					}
+				}
+				ensure(slot_usage[x] == 0);
+				availabile_slots.insert(x);
         break;
       }
       case REARRANGE: {
@@ -149,11 +206,22 @@ int main(int argc, char* argv[]) {
         inf.readSpace();
         long long t = inf.readLong(0, kMaxT, "t[" + to_string(i) + "]");
         inf.readEoln();
+        ensure(current_time < t);
+        current_time = t;
         break;
       }
       case FETCH: {
         long long t = inf.readLong(0, kMaxT, "t[" + to_string(i) + "]");
         inf.readEoln();
+        ensure(current_time < t);
+        current_time = t;
+
+        while (!chuiyuan.empty() && chuiyuan.top().first <= t) {
+					auto [time, student] = chuiyuan.top();
+					chuiyuan.pop();
+					student_location[student] = -1;
+					available_students.insert(student);
+				}
         break;
       }
       case REBUILD: {
