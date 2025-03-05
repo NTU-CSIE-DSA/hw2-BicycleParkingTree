@@ -11,7 +11,7 @@ using min_heap = priority_queue<pair<int64_t, int>, vector<pair<int64_t, int>>, 
 
 #define CAP_LIM(cap) (cap * 2)
 
-void gen_commands(const int n, const int m, const int q, const vector<int> &cap, const vector<int> &fetch_delay, vector<edge> edges) {
+void gen_commands(const int n, const int m, const int q, const vector<int> &cap, const vector<int> &fetch_delay) {
 	int total_cap = 0;
 	for (int i = 0; i < n; ++i) {
 		total_cap += cap[i];
@@ -204,9 +204,8 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 				break;
 			}
 			case REBUILD: {
-				int eindex = rnd.next(0, int(edges.size() - 1));
-				int64_t nd = rnd.next(0, 1000000);
-				cout << " " << edges[eindex].from << " " << edges[eindex].to << " " << nd << "\n";
+				cerr << "subtask234 does not contain rebuild\n";
+				exit(-1);
 				break;
 			}
 			default: {
@@ -244,6 +243,6 @@ int main(int argc, char* argv[]) {
 		cout << e.from << " " << e.to << " " << e.dis << "\n";
 	}
 	// Operations
-	gen_commands(n, m, q, cap, fetch_delay, edges);
+	gen_commands(n, m, q, cap, fetch_delay);
   return 0;
 }

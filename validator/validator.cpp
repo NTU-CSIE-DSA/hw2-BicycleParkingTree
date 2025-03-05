@@ -123,6 +123,7 @@ int main(int argc, char* argv[]) {
 	//*   3. -2, chuiyuan
 	map<int, int> student_location;
 	set<int> available_students;
+	set<int> rule_voilated_students;
 	for (int i = 0; i < m; ++i) {
 		available_students.insert(i);
 	}
@@ -132,7 +133,7 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < n; ++i) {
 		availabile_slots.insert(i);
 	}
-	int bicycle_in_tree = 0;
+	int bicycle_in_tree = 0, overfilled_slots = 0;
 	
 	min_heap chuiyuan;
 	ensure(chuiyuan.empty());
@@ -150,7 +151,13 @@ int main(int argc, char* argv[]) {
         int p = inf.readInt(1, cap[x], "p[" + to_string(i) + "]");
         inf.readEoln();
 				
-        slot_usage[x]++;
+        if (slot_usage[x] >= cap[x]) {
+					rule_voilated_students.insert(s);
+				}
+				if (slot_usage[x] == cap[x]) {
+					overfilled_slots++;
+				}
+				slot_usage[x]++;
 				if (slot_usage[x] == CAP_LIM(cap[x])) {
 					availabile_slots.erase(x);
 				}
@@ -171,8 +178,20 @@ int main(int argc, char* argv[]) {
         inf.readEoln();
         
         slot_usage[x]--;
+				if (rule_voilated_students.count(s)) {
+					rule_voilated_students.erase(s);
+				}
 				if (slot_usage[x] < CAP_LIM(cap[x])) {
 					availabile_slots.insert(x);
+				}
+				if (slot_usage[x] <= cap[x]) {
+					overfilled_slots--;
+				}
+				if (slot_usage[y] >= cap[y]) {
+					rule_voilated_students.insert(y);
+				}
+				if (slot_usage[y] == cap[y]) {
+					overfilled_slots++;
 				}
 				slot_usage[y]++;
 				if (slot_usage[y] == CAP_LIM(cap[y])) {
@@ -208,6 +227,17 @@ int main(int argc, char* argv[]) {
         inf.readEoln();
         ensure(current_time < t);
         current_time = t;
+				for (auto [st, sl] : student_location) {
+					if (sl == x && rule_voilated_students.count(st)) {
+						student_location[st] = -2;
+						slot_usage[x]--;
+						chuiyuan.emplace(t + fetch_delay[st], st);
+						rule_voilated_students.erase(st);
+						bicycle_in_tree--;
+					}
+				}
+				ensure(slot_usage[x] <= cap[x]);
+				availabile_slots.insert(x);
         break;
       }
       case FETCH: {
