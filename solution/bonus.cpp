@@ -85,12 +85,12 @@ struct edge {
   int64_t dis;
 };
 
-struct chuiyuan_info {
+struct shuiyuan_info {
   int owner;
   int64_t t;
 };
 
-int chuiyuan_info_cmp(void *a, void *b);
+int shuiyuan_info_cmp(void *a, void *b);
 
 struct bicycle_parking_tree {
   size_t n, m;
@@ -105,7 +105,7 @@ struct bicycle_parking_tree {
   int *depth;
   int64_t *binary_index_tree;
   size_t *previous_slot;
-  struct cds_heap chuiyuan;
+  struct cds_heap shuiyuan;
 };
 
 void binary_index_tree_update(struct bicycle_parking_tree *parking_tree, int index, int64_t value);
@@ -580,9 +580,9 @@ int parking_slot_erase(struct parking_slot *slot, int target_id) {
 }
 
 
-int chuiyuan_info_cmp(const void *a, const void *b) {
-  struct chuiyuan_info *ca = (struct chuiyuan_info*) a;
-  struct chuiyuan_info *cb = (struct chuiyuan_info*) b;
+int shuiyuan_info_cmp(const void *a, const void *b) {
+  struct shuiyuan_info *ca = (struct shuiyuan_info*) a;
+  struct shuiyuan_info *cb = (struct shuiyuan_info*) b;
   if (ca->t < cb->t) return -1;
   if (ca->t > cb->t) return 1;
   if (ca->owner < cb->owner) return -1;
@@ -626,7 +626,7 @@ struct bicycle_parking_tree bicycle_parking_tree_new(size_t n, size_t m) {
     .subtree_size = (int*) calloc(n, sizeof(int)),
     .depth = (int*) malloc(sizeof(int) * n),
     .previous_slot = (size_t*) calloc(m, sizeof(size_t)),
-    .chuiyuan = cds_heap_new(sizeof(struct chuiyuan_info), chuiyuan_info_cmp)};
+    .shuiyuan = cds_heap_new(sizeof(struct shuiyuan_info), shuiyuan_info_cmp)};
   for (int i = 0; i < n; ++i) {
     new_parking_tree.edges[i] = cds_array_new(sizeof(struct edge));
   }
@@ -649,7 +649,7 @@ void bicycle_parking_tree_delete(struct bicycle_parking_tree *parking_tree) {
   free(parking_tree->parent);
   free(parking_tree->depth);
   free(parking_tree->previous_slot);
-  cds_heap_delete(&parking_tree->chuiyuan);
+  cds_heap_delete(&parking_tree->shuiyuan);
 }
 
 void bicycle_parking_tree_find_parent(struct bicycle_parking_tree *parking_tree, int now, int parent) {
@@ -748,11 +748,11 @@ void move(struct bicycle_parking_tree *parking_tree, int s, size_t y, size_t p) 
 void clear(struct bicycle_parking_tree *parking_tree, size_t x, int64_t t) {
   for (size_t i = 0; i < cds_array_size(&parking_tree->parking_slots[x].bicycles); ++i) {
     struct bicycle *b = (struct bicycle*) cds_array_at(&parking_tree->parking_slots[x].bicycles, i);
-    struct chuiyuan_info info = {
+    struct shuiyuan_info info = {
       .owner = b->owner,
       .t = t + parking_tree->fetch_delay[b->owner]
     };
-    cds_heap_push(&parking_tree->chuiyuan, &info);
+    cds_heap_push(&parking_tree->shuiyuan, &info);
   }
   cds_array_delete(&parking_tree->parking_slots[x].bicycles);
   parking_tree->parking_slots[x].bicycles = cds_array_new(sizeof(struct bicycle));
@@ -764,11 +764,11 @@ void rearrange(struct bicycle_parking_tree *parking_tree, size_t x, int64_t t) {
   for (size_t i = 0; i < cds_array_size(bicycles); ++i) {
     struct bicycle *b = (struct bicycle*) cds_array_at(bicycles, i);
     if (b->location.q != 1) {
-      struct chuiyuan_info info = {
+      struct shuiyuan_info info = {
         .owner = b->owner,
         .t = t + parking_tree->fetch_delay[b->owner]
       };
-      cds_heap_push(&parking_tree->chuiyuan, &info);
+      cds_heap_push(&parking_tree->shuiyuan, &info);
     } else {
       if (new_size != i) {
         memmove(cds_array_at(bicycles, new_size), b, sizeof(struct bicycle));
@@ -782,10 +782,10 @@ void rearrange(struct bicycle_parking_tree *parking_tree, size_t x, int64_t t) {
 
 void fetch(struct bicycle_parking_tree *parking_tree, int64_t t) {
   int fetched = 0;
-  while (cds_heap_size(&parking_tree->chuiyuan) > 0 && 
-      ((struct chuiyuan_info*) cds_heap_top(&parking_tree->chuiyuan))->t <= t) {
+  while (cds_heap_size(&parking_tree->shuiyuan) > 0 && 
+      ((struct shuiyuan_info*) cds_heap_top(&parking_tree->shuiyuan))->t <= t) {
     fetched++;
-    cds_heap_pop(&parking_tree->chuiyuan);
+    cds_heap_pop(&parking_tree->shuiyuan);
   }
   printf("At %" SCNd64 ", %d bicycles was fetched.\n", t, fetched);
 }
