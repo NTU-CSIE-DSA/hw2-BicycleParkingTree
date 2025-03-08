@@ -464,7 +464,8 @@ void parking_slot_delete(struct parking_slot *slot) {
 
 struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t target_location) {
   struct rational r_target = { .p = (int64_t) target_location, .q = 1 };
-  int occupied[32] = {0};
+  int *occupied = (int*) calloc(sizeof(int), slot->capacity + 1);
+  // int occupied[32] = {0};
   //* We want to find:
   //*
   //*   1. min_index              is the bicycle nearest to the target location
@@ -497,6 +498,7 @@ struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t
   }
   //* If the parking slot has empty space at p, the student park zir bicycle at p.
   if (!occupied[target_location]) {
+    free(occupied);
     struct bicycle new_bicycle = {
       .location = {(int64_t) target_location, 1},
       .owner = owner,};
@@ -523,6 +525,7 @@ struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t
       }
     }
   }
+  free(occupied);
   if (find_vacancy) {
     smallest_right_index = -1;
     struct rational r_nearest_location = { .p = nearest_vacant_location, .q = 1};
