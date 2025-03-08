@@ -9,7 +9,7 @@ using namespace std;
 enum Operation { PARK = 0, MOVE = 1, CLEAR = 2, REARRANGE = 3, FETCH = 4, REBUILD = 5 };
 using min_heap = priority_queue<pair<int64_t, int>, vector<pair<int64_t, int>>, greater<pair<int64_t, int>>>;
 
-#define CAP_LIM(cap) (cap)
+#define CAP_LIM(cap) (cap * 2)
 
 void gen_commands(const int n, const int m, const int q, const vector<int> &cap, const vector<int> &fetch_delay) {
 	int total_cap = 0;
@@ -40,11 +40,11 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 
 	for (int i = 0; i < q; ++i) {
 		cerr << "operation: ";
-		int park_w = bicycle_in_tree >= total_cap || available_students.empty() ? 0 : 20;
-		int move_w = bicycle_in_tree == 0 || n == 1 || availabile_slots.empty() ? 0 : 10;
-		int clear_w = bicycle_in_tree > 0 ? 2 : 0;
+		int park_w = bicycle_in_tree >= CAP_LIM(total_cap) - 1 || available_students.empty() ? 0 : 5;
+		int move_w = bicycle_in_tree == 0 || n == 1 || availabile_slots.empty() ? 0 : 50;
+		int clear_w = 0;
 		int rearrange_w = 0;
-		int fetch_w = chuiyuan.empty() ? 0 : 2;
+		int fetch_w = 0;
 		int rebuild_w = 0;
 		Operation op;
 		op = static_cast<Operation>(rnd.nextByDistribution({park_w, move_w, clear_w, rearrange_w, fetch_w, rebuild_w}));
@@ -53,7 +53,7 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 			case PARK: {
 				bool find_vac = false;
 				for (int i = 0; i < n; ++i) {
-					if (cap[i] > slot_usage[i]) {
+					if (CAP_LIM(cap[i]) > slot_usage[i]) {
 						find_vac = true;
 					}
 				}
@@ -116,28 +116,8 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 				break;
 			}
 			case CLEAR: {
-				int x = rnd.next(0, n - 1);
-				int iter = 0;
-				while (slot_usage[x] == 0) {
-					x = rnd.next(0, n - 1);
-					iter++;
-					if (iter > 100000) cerr << "stuck in move\n", exit(-1);
-				}
-
-				int64_t t = rnd.next(current_time + 1, current_time + 100000000);
-				cout << " " << x << " " << t << "\n";
-				
-				current_time = t;
-				for (auto [st, sl] : student_location) {
-					if (sl == x) {
-						student_location[st] = -2;
-						slot_usage[x]--;
-						chuiyuan.emplace(t + fetch_delay[st], st);
-						bicycle_in_tree--;
-					}
-				}
-				assert(slot_usage[x] == 0);
-				availabile_slots.insert(x);
+				cerr << "subtask1 does not contain clear, since it is not useful\n";
+				exit(-1);	
 				break;
 			}
 			case REARRANGE: {
@@ -146,17 +126,8 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 				break;
 			}
 			case FETCH: {
-				int64_t t = rnd.next(current_time + 1, current_time + 100000000);
-				current_time = t;
-				
-				cout << " " << t << "\n";
-
-				while (!chuiyuan.empty() && chuiyuan.top().first <= t) {
-					auto [time, student] = chuiyuan.top();
-					chuiyuan.pop();
-					student_location[student] = -1;
-					available_students.insert(student);
-				}
+				cerr << "subtask1 does not contain fetch\n";
+				exit(-1);
 				break;
 			}
 			case REBUILD: {

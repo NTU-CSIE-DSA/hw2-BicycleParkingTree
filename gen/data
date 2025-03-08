@@ -11,7 +11,7 @@ manual 2-02.in
 manual 3-02.in
 
 @testset 1_public
-gen_sub1 1 10 10 OwO
+gen_sub1 5 10 10 OwO
 gen_sub1 5 100 100 abc
 gen_sub1 5 300 1000 acb
 gen_sub1 10 300 1000 OAO
@@ -20,8 +20,8 @@ gen_sub1 100 300 1000 XDD
 gen_sub1 300 300 1000 www
 
 @testset 1_private
-gen_sub1 1 5 10 jngen
-gen_sub1 1 5 10 jng
+gen_sub1 5 5 10 jngen
+gen_sub1 5 5 10 jng
 gen_sub1 5 100 100 pop
 gen_sub1 5 100 100 popop
 gen_sub1 5 300 1000 cds
@@ -55,8 +55,8 @@ gen_sub234 10 300 1000 movea
 gen_sub234 10 300 1000 moveamove
 gen_sub234 50 300 1000 rearrangea
 gen_sub234 50 300 1000 rearrangearr
-gen_sub234 100 300 1000 (`wa`)
-gen_sub234 100 300 1000 (`waw`)
+gen_sub234 100 300 1000 wa
+gen_sub234 100 300 1000 waw
 gen_sub234 300 300 1000 ==a
 gen_sub234 300 300 1000 ====aa
 
@@ -66,11 +66,6 @@ gen_sub234 300 10000 10000 OAOO
 gen_sub234 300 100000 100000 OAOOO
 gen_sub234 300 300000 100000 OAOOOO5
 gen_sub234 300 300000 100000 aaaaa
-gen_sub234 300 300000 100000 aaa5aaa4
-gen_sub234 300 300000 100000 aaaaaa4a
-gen_sub234 300 300000 100000 aaaa4a5aaa
-gen_sub234 300 300000 100000 aaaa7aaaaa
-gen_sub234 300 300000 100000 aaaaa9aaaaa
 
 @testset 3_private
 gen_sub234 300 1000 1000 XD
@@ -78,21 +73,11 @@ gen_sub234 300 1000 1000 XDXD
 gen_sub234 300 10000 10000 XDXXD
 gen_sub234 300 10000 10000 XDXXDXD
 gen_sub234 300 100000 100000 XDXXDXDXD
-gen_sub234 300 100000 100000 XDXXDXDXD
-gen_sub234 300 100000 100000 XDXXDXDXDXD
 gen_sub234 300 100000 100000 XDXXDXDXDXD
 gen_sub234 300 300000 100000 XDXXDXDXDbDXD
 gen_sub234 300 300000 100000 XDX7XDXDXDXDXD
 gen_sub234 300 300000 100000 XDXXDXDXDbDXDXD
 gen_sub234 300 300000 100000 XDXXDXDXDXDXDXD
-gen_sub234 300 300000 100000 XDXXDXDXDXbXDXDXD
-gen_sub234 300 300000 100000 XDXXDXDXDXDXDXDXD
-gen_sub234 300 300000 100000 XDXXDXDXDXbXDXDXDXD
-gen_sub234 300 300000 100000 XDXXDXDXDXDXDXDXDXD
-gen_sub234 300 300000 100000 XDXXDXDXDXbXDXDXDXDXD
-gen_sub234 300 300000 100000 XDXXDXDXDXDXDXDXDXDXD
-gen_sub234 300 300000 100000 XDXXDXDXDXbXDXDXDXDXDXD
-gen_sub234 300 300000 100000 XDXXDXDXDXDXDXDXDXDXDXD
 
 @testset 4_public
 gen_sub234 100 1000 1000 int
@@ -101,8 +86,6 @@ gen_sub234 100000 10000 10000 int
 gen_sub234 100000 100000 100000 int
 gen_sub234 300000 100000 100000 inti
 gen_sub234 300000 300000 100000 intin
-gen_sub234 300000 300000 100000 intint
-gen_sub234 300000 300000 100000 intinti
 
 @testset 4_private
 gen_sub234 100 1000 1000 float
@@ -117,17 +100,12 @@ gen_sub234 300000 100000 100000 floatfloatfloatfloatfloat
 gen_sub234 300000 100000 100000 floatfloatfloatfloatfloatfloat
 gen_sub234 300000 300000 100000 floatfloatfloatfloatfloatfloat
 gen_sub234 300000 300000 100000 floatfloatfloatfloatfloatfloatfloat
-gen_sub234 300000 300000 100000 floatfloatfloatfloatfloatfloatfloatfloat
-gen_sub234 300000 300000 100000 floatfloatfloatfloatfloatfloatfloatfloatfloat
-gen_sub234 300000 300000 100000 14574
-gen_sub234 300000 300000 100000 1457414574
 
 @testset 5_public
 gen_sub5 10000 100000 100000 bonus
 gen_sub5 100000 100000 100000 bonuss
 gen_sub5 300000 100000 100000 bonusss
-gen_sub5 300000 100000 100000 bonusdss
-gen_sub5 300000 100000 100000 bonusssss
+gen_sub5 300000 300000 100000 bonusdss
 
 @testset 5_private
 gen_sub5 10000 100000 100000 ddd
@@ -136,10 +114,8 @@ gen_sub5 100000 100000 100000 bodnuss
 gen_sub5 100000 100000 100000 bonduss
 gen_sub5 300000 100000 100000 bondudsss
 gen_sub5 300000 100000 100000 bodnusss
-gen_sub5 300000 100000 100000 boddnussss
-gen_sub5 300000 100000 100000 bodndussdss
-gen_sub5 300000 100000 100000 bondusssss
-gen_sub5 300000 100000 100000 boddnudsssss
+gen_sub5 300000 300000 100000 boddnussss
+gen_sub5 300000 300000 100000 bodndussdss
 
 @testset 1
 @include 1_public
