@@ -100,7 +100,6 @@ gen_sub5 100 100 1000 bonus
 gen_sub5 100 100 1000 bognus
 gen_sub5 100 100 1000 bonsus
 gen_sub5 100 100 1000 bondus
-gen_sub5 10000 100000 100000 bonus
 gen_sub5 300000 300000 100000 bonusdss
 
 @testset 5_private
@@ -112,8 +111,6 @@ gen_sub5 100 100 1000 bon87us
 gen_sub5 100 100 1000 bogn98us
 gen_sub5 100 100 1000 bons88us
 gen_sub5 100 100 1000 bon97dus
-gen_sub5 10000 100000 100000 ddd
-gen_sub5 10000 100000 100000 bodddnus
 gen_sub5 300000 300000 100000 boddnussss
 gen_sub5 300000 300000 100000 bodndussdss
 
