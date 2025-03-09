@@ -1,13 +1,14 @@
 #include <cassert>
 #include <cstdint>
 #include <iostream>
+#include <queue>
 #include <map>
 #include "jngen.h"
 #include "GraphGen.h"
 using namespace std;
 
 enum Operation { PARK = 0, MOVE = 1, CLEAR = 2, REARRANGE = 3, FETCH = 4, REBUILD = 5 };
-using min_heap = priority_queue<pair<int64_t, int>, vector<pair<int64_t, int>>, greater<pair<int64_t, int>>>;
+using min_heap = priority_queue<pair<long long, int>, vector<pair<long long, int>>, greater<pair<long long, int>>>;
 
 #define CAP_LIM(cap) (cap * 2)
 
@@ -17,7 +18,7 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 		total_cap += cap[i];
 	}
 	
-	int64_t current_time = 0;
+	long long current_time = 0;
 	//* student_location
 	//*   1. 0~n-1, in bicycle slot
 	//*   2. -1, their home
@@ -143,7 +144,7 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 					if (iter > 500000) cerr << "stuck in clear\n", exit(-1);
 				}
 
-				int64_t t = rnd.next(current_time + 1, current_time + 100000000);
+				long long t = rnd.next(current_time + 1, current_time + 100000000);
 				cout << " " << x << " " << t << "\n";
 				
 				current_time = t;
@@ -171,7 +172,7 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 					if (iter > 500000) cerr << "stuck in rearrange\n", exit(-1);
 				}
 				
-				int64_t t = rnd.next(current_time + 1, current_time + 100000000);
+				long long t = rnd.next(current_time + 1, current_time + 100000000);
 				cout << " " << x << " " << t << "\n";
 
 				current_time = t;
@@ -189,7 +190,7 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 				break;
 			}
 			case FETCH: {
-				int64_t t = rnd.next(current_time + 1, current_time + 100000000);
+				long long t = rnd.next(current_time + 1, current_time + 100000000);
 				current_time = t;
 				
 				cout << " " << t << "\n";
@@ -205,7 +206,7 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 			}
 			case REBUILD: {
 				int eindex = rnd.next(0, int(edges.size() - 1));
-				int64_t nd = rnd.next(0, 1000000);
+				long long nd = rnd.next(0, 1000000);
 				cout << " " << edges[eindex].from << " " << edges[eindex].to << " " << nd << "\n";
 				break;
 			}

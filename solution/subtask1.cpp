@@ -17,15 +17,15 @@ enum Operation {
   REBUILD = 5
 };
 
-int64_t gcd(int64_t a, int64_t b);
-int64_t lcm(int64_t a, int64_t b);
+long long gcd(long long a, long long b);
+long long lcm(long long a, long long b);
 
 struct rational {
-  int64_t p, q;
+  long long p, q;
 };
 
-struct rational rational_new(int64_t p, int64_t q);
-struct rational rational_from(int64_t p);
+struct rational rational_new(long long p, long long q);
+struct rational rational_from(long long p);
 void rational_simplify(struct rational *num);
 struct rational rational_add(struct rational a, struct rational b);
 struct rational rational_sub(struct rational a, struct rational b);
@@ -69,12 +69,12 @@ int parking_slot_erase(struct parking_slot *slot, int target_id);
 
 struct edge {
   size_t to;
-  int64_t dis;
+  long long dis;
 };
 
 struct shuiyuan_info {
   int owner;
-  int64_t t;
+  long long t;
 };
 
 int shuiyuan_info_cmp(void *a, void *b);
@@ -84,8 +84,8 @@ struct bicycle_parking_tree {
   size_t n, m;
   struct parking_slot *parking_slots;
   struct cds_array *edges;
-  int64_t *fetch_delay;
-  int64_t *dis_from_root;
+  long long *fetch_delay;
+  long long *dis_from_root;
   int *depth;
   size_t *previous_slot;
   size_t *ancestor[LCA_LAYER];
@@ -93,10 +93,10 @@ struct bicycle_parking_tree {
 
 struct bicycle_parking_tree bicycle_parking_tree_new(size_t n, size_t m);
 void bicycle_parking_tree_delete(struct bicycle_parking_tree *parking_tree);
-void bicycle_parking_tree_find_parent(struct bicycle_parking_tree *parking_tree, int now, int parent, int64_t dis);
+void bicycle_parking_tree_find_parent(struct bicycle_parking_tree *parking_tree, int now, int parent, long long dis);
 void bicycle_parking_tree_build_ancestor(struct bicycle_parking_tree *parking_tree);
 size_t bicycle_parking_tree_find_lca(struct bicycle_parking_tree *parking_tree, size_t u, size_t v);
-int64_t bicycle_parking_tree_find_dis(struct bicycle_parking_tree *parking_tree, size_t from, size_t to);
+long long bicycle_parking_tree_find_dis(struct bicycle_parking_tree *parking_tree, size_t from, size_t to);
 
 void park(struct bicycle_parking_tree *parking_tree, int s, size_t x, size_t p);
 void move(struct bicycle_parking_tree *parking_tree, int s, size_t x, size_t y, size_t p);
@@ -125,13 +125,13 @@ int main(void) {
   }
   // Read third line: fetch delay for each student
   for (int i = 0; i < m; ++i) {
-    assert(scanf("%" SCNd64, &parking_tree.fetch_delay[i]) == 1);
+    assert(scanf("%lld", &parking_tree.fetch_delay[i]) == 1);
   }
   // Read tree
   for (int i = 0; i < (int) n - 1; ++i) {
     size_t x, y;
-    int64_t w;
-    assert(scanf("%zu%zu%" SCNd64, &x, &y, &w) == 3);
+    long long w;
+    assert(scanf("%zu%zu%lld", &x, &y, &w) == 3);
     struct edge toy = { .to = y, .dis = w };
     cds_array_push_back(&parking_tree.edges[x], (void*) &toy);
     struct edge tox = { .to = x, .dis = w };
@@ -145,8 +145,8 @@ int main(void) {
 }
 
 
-int64_t gcd(int64_t a, int64_t b) {
-  int64_t tp = a % b;
+long long gcd(long long a, long long b) {
+  long long tp = a % b;
   while(tp != 0) {
     a = b;
     b = tp;
@@ -155,24 +155,24 @@ int64_t gcd(int64_t a, int64_t b) {
   return b;
 }
 
-int64_t lcm(int64_t a, int64_t b) {
+long long lcm(long long a, long long b) {
   return a / gcd(a, b) * b;
 }
 
 
-struct rational rational_new(int64_t p, int64_t q) {
+struct rational rational_new(long long p, long long q) {
   struct rational new_rational = {p, q};
   return new_rational;
 }
 
-struct rational rational_from(int64_t p) {
+struct rational rational_from(long long p) {
   struct rational new_rational = {p, 1};
   return new_rational;
 }
 
 void rational_simplify(struct rational *num) {
   if(num->q == 0) num->q = 1;
-  int64_t GCD = gcd(num->p, num->q);
+  long long GCD = gcd(num->p, num->q);
   num->p /= GCD;
   num->q /= GCD;
   if(num->q < 0) {
@@ -183,7 +183,7 @@ void rational_simplify(struct rational *num) {
 
 struct rational rational_add(struct rational a, struct rational b) {
   struct rational ret = {a.p, a.q};
-  int64_t LCM = lcm(ret.q, b.q);
+  long long LCM = lcm(ret.q, b.q);
   ret.p *= LCM / ret.q;
   ret.q = LCM;
   b.p *= LCM / b.q;
@@ -194,7 +194,7 @@ struct rational rational_add(struct rational a, struct rational b) {
 
 struct rational rational_sub(struct rational a, struct rational b) {
   struct rational ret = {a.p, a.q};
-  int64_t LCM = lcm(ret.q, b.q);
+  long long LCM = lcm(ret.q, b.q);
   ret.p *= LCM / ret.q;
   ret.q = LCM;
   b.p *= LCM / b.q;
@@ -343,7 +343,7 @@ void parking_slot_delete(struct parking_slot *slot) {
 }
 
 struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t target_location) {
-  struct rational r_target = { .p = (int64_t) target_location, .q = 1 };
+  struct rational r_target = { .p = (long long) target_location, .q = 1 };
   int occupied[32] = {0};
   int min_index = -1, target_index = -1, smallest_right_index = -1;
   struct rational min_dis = { .p = 64, .q = 1 };
@@ -369,7 +369,7 @@ struct rational parking_slot_insert(struct parking_slot *slot, int owner, size_t
   }
   if (!occupied[target_location]) {
     struct bicycle new_bicycle = {
-      .location = {(int64_t) target_location, 1},
+      .location = {(long long) target_location, 1},
       .owner = owner,};
     if (smallest_right_index == -1) {
       cds_array_push_back(&slot->bicycles, (void*) &new_bicycle);
@@ -455,8 +455,8 @@ struct bicycle_parking_tree bicycle_parking_tree_new(size_t n, size_t m) {
     .m = m,
     .parking_slots = (struct parking_slot*) malloc(sizeof(struct parking_slot) * n),
     .edges = (struct cds_array*) malloc(sizeof(struct cds_array) * n),
-    .fetch_delay = (int64_t*) malloc(sizeof(int64_t) * m),
-    .dis_from_root = (int64_t*) malloc(sizeof(int64_t) * n),
+    .fetch_delay = (long long*) malloc(sizeof(long long) * m),
+    .dis_from_root = (long long*) malloc(sizeof(long long) * n),
     .depth = (int*) malloc(sizeof(int) * n),
     .previous_slot = (size_t*) calloc(m, sizeof(size_t))};
   for (int i = 0; i < n; ++i) {
@@ -486,7 +486,7 @@ void bicycle_parking_tree_delete(struct bicycle_parking_tree *parking_tree) {
   }
 }
 
-void bicycle_parking_tree_find_parent(struct bicycle_parking_tree *parking_tree, int now, int parent, int64_t dis) {
+void bicycle_parking_tree_find_parent(struct bicycle_parking_tree *parking_tree, int now, int parent, long long dis) {
   parking_tree->ancestor[0][now] = parent;
   parking_tree->dis_from_root[now] = dis;
   parking_tree->depth[now] = parking_tree->depth[parent] + 1;
@@ -530,7 +530,7 @@ size_t bicycle_parking_tree_find_lca(struct bicycle_parking_tree *parking_tree, 
   return parking_tree->ancestor[0][u];
 }
 
-int64_t bicycle_parking_tree_find_dis(struct bicycle_parking_tree *parking_tree, size_t from, size_t to) {
+long long bicycle_parking_tree_find_dis(struct bicycle_parking_tree *parking_tree, size_t from, size_t to) {
   size_t lca = bicycle_parking_tree_find_lca(parking_tree, from, to);
   fprintf(stderr, "lca: %zu ", lca);
   return parking_tree->dis_from_root[from] + parking_tree->dis_from_root[to]
@@ -543,9 +543,9 @@ void park(struct bicycle_parking_tree *parking_tree, int s, size_t x, size_t p) 
   parking_tree->previous_slot[s] = x;
   printf("%d parked at (%zu, ", s, x);
   if (final_position.q == 1) {
-    printf("%" SCNd64, final_position.p);
+    printf("%lld", final_position.p);
   } else {
-    printf("%" SCNd64 "/%" SCNd64 , final_position.p, final_position.q);
+    printf("%lld" "/%lld" , final_position.p, final_position.q);
   }
   printf(").\n");
 }
@@ -557,8 +557,8 @@ void move(struct bicycle_parking_tree *parking_tree, int s, size_t y, size_t p) 
     return;
   }
   parking_slot_erase(&parking_tree->parking_slots[x], s);
-  const int64_t t = bicycle_parking_tree_find_dis(parking_tree, x, y);
-  printf("%d moved to %zu in %" SCNd64 " seconds.\n", s, y, t);
+  const long long t = bicycle_parking_tree_find_dis(parking_tree, x, y);
+  printf("%d moved to %zu in %lld" " seconds.\n", s, y, t);
   parking_slot_insert(&parking_tree->parking_slots[y], s, p);
   parking_tree->previous_slot[s] = y;
 }
