@@ -624,10 +624,10 @@ struct bicycle_parking_tree bicycle_parking_tree_new(size_t n, size_t m) {
     .chain_top = (int*) malloc(sizeof(int) * n),
     .order = (int*) calloc(n, sizeof(int)),
     .parent = (int*) malloc(sizeof(int) * n),
-    .link = (int*) malloc(sizeof(int) * n),
-    .binary_index_tree = (long long*) calloc(n + 1, sizeof(long long)),
     .subtree_size = (int*) calloc(n, sizeof(int)),
+    .link = (int*) malloc(sizeof(int) * n),
     .depth = (int*) malloc(sizeof(int) * n),
+    .binary_index_tree = (long long*) calloc(n + 1, sizeof(long long)),
     .previous_slot = (size_t*) calloc(m, sizeof(size_t)),
     .shuiyuan = cds_heap_new(sizeof(struct shuiyuan_info), shuiyuan_info_cmp)};
   for (int i = 0; i < n; ++i) {
