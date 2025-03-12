@@ -76,7 +76,7 @@
             ]
         },
         {
-            "points": 0,
+            "points": 20,
             "tests": [
                 "sample1-01", "sample2-01", "sample3-01", "sample4-01",
                 "1_public-01", "1_public-02", "1_public-03", "1_public-04", "1_public-05",
@@ -101,7 +101,7 @@
             ]
         },
         {
-            "points": 20,
+            "points": 0,
             "tests": [
                 "sample1-01", "sample2-01", "sample3-01", "sample4-01",
                 "1_public-01", "1_public-02", "1_public-03", "1_public-04", "1_public-05",

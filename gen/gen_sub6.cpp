@@ -12,7 +12,7 @@ using min_heap = priority_queue<pair<long long, int>, vector<pair<long long, int
 
 #define CAP_LIM(cap) (cap * 2)
 
-void gen_commands(const int n, const int m, const int q, const vector<int> &cap, const vector<int> &fetch_delay) {
+void gen_commands(const int n, const int m, const int q, const vector<int> &cap, const vector<int> &fetch_delay, vector<edge> edges) {
 	int total_cap = 0;
 	for (int i = 0; i < n; ++i) {
 		total_cap += cap[i];
@@ -47,7 +47,7 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 		int clear_w = bicycle_in_tree > 0 ? 2 : 0;
 		int rearrange_w = overfilled_slots > 0 ? 2 : 0;
 		int fetch_w = chuiyuan.empty() ? 0 : 2;
-		int rebuild_w = 0;
+		int rebuild_w = 1;
 		Operation op;
 		op = static_cast<Operation>(rnd.nextByDistribution({park_w, move_w, clear_w, rearrange_w, fetch_w, rebuild_w}));
 		cout << op << flush;
@@ -205,8 +205,9 @@ void gen_commands(const int n, const int m, const int q, const vector<int> &cap,
 				break;
 			}
 			case REBUILD: {
-				cerr << "subtask234 does not contain rebuild\n";
-				exit(-1);
+				int eindex = rnd.next(0, int(edges.size() - 1));
+				long long nd = rnd.next(0, 1000000);
+				cout << " " << edges[eindex].from << " " << edges[eindex].to << " " << nd << "\n";
 				break;
 			}
 			default: {
@@ -225,7 +226,7 @@ int main(int argc, char* argv[]) {
 	// Line2
 	vector<int> cap(n);
 	for (int i = 0; i < n; ++i) {
-		cap[i] = rnd.next(2, 1000000);
+		cap[i] = rnd.next(2, 15);
 	}
 	for (int i = 0; i < n; ++i) {
 		cout << cap[i] << " \n"[i == n - 1];
@@ -244,6 +245,6 @@ int main(int argc, char* argv[]) {
 		cout << e.from << " " << e.to << " " << e.dis << "\n";
 	}
 	// Operations
-	gen_commands(n, m, q, cap, fetch_delay);
+	gen_commands(n, m, q, cap, fetch_delay, edges);
   return 0;
 }

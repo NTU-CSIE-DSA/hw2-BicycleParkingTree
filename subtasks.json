@@ -28,13 +28,13 @@
         },
         "subtask5": {
             "index": 5,
-            "score": 0,
-            "validators": ["validator.cpp"]
+            "score": 20,
+            "validators": []
         },
         "subtask6": {
             "index": 6,
-            "score": 20,
-            "validators": []
+            "score": 0,
+            "validators": ["validator.cpp"]
         }
     }
 }

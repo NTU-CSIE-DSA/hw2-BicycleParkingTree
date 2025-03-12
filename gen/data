@@ -96,42 +96,42 @@ gen_sub234 300000 300000 100000 floatfloatfloatfloatfloatfloat
 gen_sub234 300000 300000 100000 floatfloatfloatfloatfloatfloatfloat
 
 @testset 5_public
-gen_sub5 100 100 1000 bonus
-gen_sub5 100 100 1000 bognus
-gen_sub5 100 100 1000 bonsus
-gen_sub5 100 100 1000 bondus
-gen_sub5 300000 300000 100000 bonusdss
+gen_sub5 100 100 1000 bonus2
+gen_sub5 100 100 1000 bognus2
+gen_sub5 100 100 1000 bonsus2
+gen_sub5 5 300000 100000 botn1dus2
+gen_sub5 100 300000 100000 bon8u8ksdss2
 
 @testset 5_private
-gen_sub5 100 100 1000 b1onus
-gen_sub5 100 100 1000 b12ognus
-gen_sub5 100 100 1000 bo2nsus
-gen_sub5 100 100 1000 bo45ndus
-gen_sub5 100 100 1000 bon87us
-gen_sub5 100 100 1000 bogn98us
-gen_sub5 100 100 1000 bons88us
-gen_sub5 100 100 1000 bon97dus
-gen_sub5 300000 300000 100000 boddnussss
-gen_sub5 300000 300000 100000 bodndussdss
+gen_sub5 100 100 1000 b1onus2
+gen_sub5 100 100 1000 b12ognus2
+gen_sub5 100 100 1000 bo2nsus2
+gen_sub5 100 100 1000 bo45ndus2
+gen_sub5 100 100 1000 bon87us2
+gen_sub5 100 100 1000 bogn98us2
+gen_sub5 5 300000 100000 bons88us2
+gen_sub5 5 300000 100000 bon97dus2
+gen_sub5 100 300000 100000 boddnmussss2
+gen_sub5 100 300000 100000 bodndunssdss2
 
 @testset 6_public
-gen_sub6 100 100 1000 bonus2
-gen_sub6 100 100 1000 bognus2
-gen_sub6 100 100 1000 bonsus2
-gen_sub6 10 300000 100000 bondus2
-gen_sub6 100 300000 100000 bon8u8ksdss2
+gen_sub6 100 100 1000 bonus
+gen_sub6 100 100 1000 bognus
+gen_sub6 100 100 1000 bonsus
+gen_sub6 100 100 1000 bondus
+gen_sub6 300000 300000 100000 abonsusdss
 
 @testset 6_private
-gen_sub6 100 100 1000 b1onus2
-gen_sub6 100 100 1000 b12ognus2
-gen_sub6 100 100 1000 bo2nsus2
-gen_sub6 100 100 1000 bo45ndus2
-gen_sub6 100 100 1000 bon87us2
-gen_sub6 100 100 1000 bogn98us2
-gen_sub6 10 300000 100000 bons88us2
-gen_sub6 10 300000 100000 bon97dus2
-gen_sub6 100 300000 100000 boddnmussss2
-gen_sub6 100 300000 100000 bodndunssdss2
+gen_sub6 100 100 1000 b1onus
+gen_sub6 100 100 1000 b12ognus
+gen_sub6 100 100 1000 bo2nsus
+gen_sub6 100 100 1000 bo45ndus
+gen_sub6 100 100 1000 bon87us
+gen_sub6 100 100 1000 bogn98us
+gen_sub6 100 100 1000 bons88us
+gen_sub6 100 100 1000 bon97dus
+gen_sub6 300000 300000 100000 bodxdnuss
+gen_sub6 300000 300000 100000 bod2nsdss
 
 @testset 1
 @include 1_public

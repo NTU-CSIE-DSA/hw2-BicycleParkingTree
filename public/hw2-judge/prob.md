@@ -111,7 +111,7 @@ For each operation:
 - $1 \leq q \leq 3 \times 10^2$
 - Only operations 1 and 2 are present.
 
-Expected solution, simple simulation without Shuiyuan.
+<!-- Expected solution, simple simulation without Shuiyuan. -->
 
 ### Subtask 2 (20pt)
 
@@ -119,32 +119,32 @@ Expected solution, simple simulation without Shuiyuan.
 - $1 \leq q \leq 10^3$
 - Only operations 1, 2, 3, 4, and 5 are present.
 
-Expected solution, harder simulation.
+<!-- Expected solution, harder simulation. -->
 
 ### Subtask 3 (20pt)
 
 - $1 \leq n \leq 3 \times 10^2$
 - Only operations 1, 2, 3, 4, and 5 are present.
 
-Expected solution, use min heap for operation 5. 
+<!-- Expected solution, use min heap for operation 5.  -->
 
 ### Subtask 4 (50pt)
 
 - Only operations 1, 2, 3, 4, and 5 are present.
 
-Expected solution, use prefix sum on the tree for operation 2.
+<!-- Expected solution, use prefix sum on the tree for operation 2. -->
 
-### Subtask 5 (Bonus: free snacks | beverages)
-
-- All operations are present.
-
-Expected solution, use heavy-light decomposition on the tree for operation 2.
-
-### Subtask 6 (Bonus: planning)
+### Subtask 5 (Bonus: 20pt)
 
 - $\forall x \in [0, n), 2 \leq c_x \leq 10 ^ 6$
 - Only operations 1, 2, 3, 4, and 5 are valid.
 <!-- - Invalid operations present. If you found an invalid solution, you should ignore it. -->
+
+### Subtask 6 (Bonus: free snacks | beverages)
+
+- All operations are present.
+<!-- Expected solution, use heavy-light decomposition on the tree for operation 2. -->
+
 
 ## Sample Testcases
 
