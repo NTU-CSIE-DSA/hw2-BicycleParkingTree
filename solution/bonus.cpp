@@ -90,7 +90,7 @@ struct shuiyuan_info {
   long long t;
 };
 
-int shuiyuan_info_cmp(void *a, void *b);
+int shuiyuan_info_cmp(const void *a, const void *b);
 
 struct bicycle_parking_tree {
   size_t n, m;
@@ -120,7 +120,7 @@ void bicycle_parking_tree_build_bit(struct bicycle_parking_tree *parking_tree, i
 long long bicycle_parking_tree_find_dis(struct bicycle_parking_tree *parking_tree, size_t from, size_t to);
 
 void park(struct bicycle_parking_tree *parking_tree, int s, size_t x, size_t p);
-void move(struct bicycle_parking_tree *parking_tree, int s, size_t x, size_t y, size_t p);
+void move(struct bicycle_parking_tree *parking_tree, int s, size_t y, size_t p);
 void clear(struct bicycle_parking_tree *parking_tree, size_t x, long long t);
 void rearrange(struct bicycle_parking_tree *parking_tree, size_t x, long long t);
 void fetch(struct bicycle_parking_tree *parking_tree, long long t);
@@ -804,7 +804,7 @@ void rebuild(struct bicycle_parking_tree *parking_tree, size_t x, size_t y, long
 
 void handle_commands(struct bicycle_parking_tree *parking_tree, size_t q) {
   for (int i = 0; i < q; ++i) {
-    Operation op;
+    int op;
     assert(scanf("%u", &op) == 1);
     switch (op) {
       case PARK: {
