@@ -7,7 +7,7 @@ representation. Feel free to read either or both, depending on your preference.
 
 There are numerous bikes in NTU, and the parking lots are scarce. Thus, students end up pushing other students' bikes into tight places, and the area gets crowded. Not only are the students unable to easily locate the bikes when leaving, but the bikes are also at greater risks of theft. In a bid to fully understand the problem, the NTU's General Affairs Office has decided to model students' parking trends.
 
-To simplify the analysis, each parking slot is considered a vertex, and these slots together form a tree structure. Each slot can accommodate one or more bicycles. Students are allowed to park their bicycles at any slot and move them between slots as needed. However, to maintain order and cleanliness, the university periodically clears and rearranges the parking areas. Bicycles that violate regulations will be relocated to Shuiyuan. If students wish to retrieve their bicycles, they must go to Shuiyuan and pay an additional fee.
+To simplify the analysis, each parking slot is considered a vertex, and these slots together form a tree structure. There is a coordinate system $[1, c_j]$ in a parking slot $j$ with capacity $c_j$. Each slot can accommodate one or more bicycles. Students are allowed to park their bicycles at any slot and move them between slots as needed. However, to maintain order and cleanliness, the university periodically clears and rearranges the parking areas. Bicycles that violate regulations will be relocated to Shuiyuan. If students wish to retrieve their bicycles, they must go to Shuiyuan and pay an additional fee.
 
 There are $5 + 1$ types of operations:
 
@@ -23,7 +23,7 @@ There are $5 + 1$ types of operations:
 
 ## Formal Version
 
-Given a weighted tree. There is a coordinate system in each vertex. The coordinate system is limited to $[1, c_x]$ You should support the following operations. We denote the undirected edge weight between $x$ and $y$ to be $w(x, y)$.
+Given a weighted tree $G(V, E), |V| = n, |E| = n - 1$. There is a coordinate system in each vertex. The coordinate system is limited to $[1, c_j], \forall j \in [0, n)$. You should support the following operations. We denote the undirected edge weight between $x$ and $y$ to be $w(x, y)$.
 
 There are $5 + 1$ types of operations:
 
@@ -45,7 +45,7 @@ There are $5 + 1$ types of operations:
 - The next $n-1$ lines contain three integers $u$, $v$, and $d$ representing the parking slot $u$ and $v$ are connected with travel time $w$.
 - The next $q$ lines contain the operations.
 
-For each operations:
+For each operation:
 
 1. Park: `0 s x p`
 2. Move: `1 s y p`
@@ -84,14 +84,14 @@ For each operation:
 
 - $1 \leq n, m \leq 3 \times 10^5$
 - $1 \leq q \leq 10^5$
-- $1 \leq s \leq m$
-- $1 \leq x, y \leq n$
+- $0 \leq s < m$
+- $0 \leq x, y < n$
 - $0 \leq d \leq 10^{5}$
 - $0 \leq t \leq 10^{15}$
 - $1 \leq p \leq c_x$
 - $\forall i \in [0, m), 0 \leq l_i \leq 10^6$
-- $\forall x \in [0, n), 2 \leq c_x \leq 15$
-- At any time, the number of bicycles/elements in a single (parking slot/vertex) $x$ will not exceed $2 \times c_x$.
+- $\forall j \in [0, n), 2 \leq c_j \leq 15$
+- At any time, the number of bicycles/elements in a single (parking slot/vertex) $x$ will not exceed $2 \times c_j$.
 - The time $t$ in all operations are given in accending order.
 
 For each operation:
@@ -111,7 +111,7 @@ For each operation:
 - $1 \leq q \leq 3 \times 10^2$
 - Only operations 1 and 2 are present.
 
-<!-- Expected solution, simple simulation without Shuiyuan. -->
+Expected solution, simple simulation without Shuiyuan.
 
 ### Subtask 2 (20pt)
 
@@ -119,32 +119,32 @@ For each operation:
 - $1 \leq q \leq 10^3$
 - Only operations 1, 2, 3, 4, and 5 are present.
 
-<!-- Expected solution, harder simulation. -->
+Expected solution, harder simulation.
 
 ### Subtask 3 (20pt)
 
 - $1 \leq n \leq 3 \times 10^2$
 - Only operations 1, 2, 3, 4, and 5 are present.
 
-<!-- Expected solution, use min heap for operation 5.  -->
+Expected solution, use min heap for operation 5. 
 
 ### Subtask 4 (50pt)
 
 - Only operations 1, 2, 3, 4, and 5 are present.
 
-<!-- Expected solution, use prefix sum on the tree for operation 2. -->
+Expected solution, use prefix sum on the tree for operation 2.
 
 ### Subtask 5 (Bonus: 20pt)
 
-- $\forall x \in [0, n), 2 \leq c_x \leq 10 ^ 6$
+- $\forall j \in [0, n), 2 \leq c_j \leq 10 ^ 6$
 - Only operations 1, 2, 3, 4, and 5 are valid.
 <!-- - Invalid operations present. If you found an invalid solution, you should ignore it. -->
 
 ### Subtask 6 (Bonus: free snacks | beverages)
 
 - All operations are present.
-<!-- Expected solution, use heavy-light decomposition on the tree for operation 2. -->
 
+Expected solution, use heavy-light decomposition on the tree for operation 2.
 
 ## Sample Testcases
 
