@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <math.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -211,6 +212,24 @@ Slot *slot_new() {
     return slot;
 }
 
+void slot_print(Slot *slot) {
+    printf("---------- Slot ----------\n");
+    HeadNode *cur = slot->head;
+    while (cur != NULL) {
+        BikeNode *x = cur->head;
+        while (x != NULL) {
+            // printf("(");
+            frac_print(x->bike.pos);
+            printf(" ");
+            // printf(", %lld) ", x->bike.owner);
+            x = x->next;
+        }
+        cur = cur->next;
+        printf("\n");
+    }
+    printf("--------------------------\n");
+}
+
 // Insert a bike node to the list, if overflow, return the last node
 // The inserted position is guaranteed to be unique
 BikeNode *list_insert(HeadNode *h, BikeNode *b) {
@@ -318,8 +337,12 @@ int find_nearest_smaller_int(int p, BikeNode *x, HeadNode *h, int cap) {
     if (p != -1) return p;
 
     // Not found, find the previous list that has integer positions
+    HeadNode *tmp = h;
     h = h->prev;
-    while (h != NULL && h->int_num == cap) h = h->prev;
+    while (h != NULL && (tmp->head->bike.pos.p - h->head->bike.pos.p) == cap) {
+        tmp = h;
+        h = h->prev;
+    }
     if (h == NULL) return -1;
 
     x = h->tail;
@@ -336,10 +359,12 @@ int find_nearest_bigger_int(int p, BikeNode *x, HeadNode *h, int cap) {
     p = find_after(p, x, h);
     if (p != -1) return p;
 
-    // Not found, find the next list that has integer positions
+    HeadNode *tmp = h;
     h = h->next;
-    while (h != NULL && h->int_num == cap) h = h->next;
-    if (h == NULL) return -1;
+    while (h != NULL && (h->tail->bike.pos.p - tmp->tail->bike.pos.p) == cap) {
+        tmp = h;
+        h = h->next;
+    }
 
     x = h->head;
     p = x->bike.pos.p;
@@ -355,18 +380,21 @@ Frac slot_insert(Slot *slot, int p, int owner) {
     debug(">>> Insert\n");
     Bike final_bike = {owner, frac_new(p, 1)};
 
-    debug("Hi 1\n");
-
     // Find which list to insert
     HeadNode *cur = slot->head;
     while (cur->next != NULL && frac_cmp(cur->next->head->bike.pos, final_bike.pos) <= 0) cur = cur->next;
 
-    debug("Hi 2\n");
     BikeNode *exact = list_has(cur, final_bike.pos);
     // Check if the slot don't have any empty integer position
     if (slot->int_num == slot->cap) {
         debug("Hi 3\n");
         Frac another;
+        debug("p = %lld\n", p);
+        if (p == 9878) {
+            slot_print(slot);
+        }
+        debug("exact = %p\n", exact);
+        debug("int_num = %lld\n", slot->int_num);
         if (p == 1) {
             // Special case: take the average of the cur and next position
             if (exact->next != NULL)
@@ -380,10 +408,10 @@ Frac slot_insert(Slot *slot, int p, int owner) {
             else
                 another = cur->prev->tail->bike.pos;
         }
+        frac_print(final_bike.pos);
         final_bike.pos = frac_ave(final_bike.pos, another);
     } else {
         if (exact != NULL) {
-            debug("Hi 4\n");
             // The position is occupied, find the nearest integer position
             int l = find_nearest_smaller_int(p - 1, exact, cur, slot->sqrt_cap);
             int r = find_nearest_bigger_int(p + 1, exact, cur, slot->sqrt_cap);
@@ -393,13 +421,18 @@ Frac slot_insert(Slot *slot, int p, int owner) {
             if (r == -1) r = slot->tail->tail->bike.pos.p + 1;
 
             int pos = (p - l <= r - p) ? l : r;
-            if (l == 0) pos = r;
-            if (r == slot->cap + 1) pos = l;
-            final_bike.pos = frac_new(pos, 1);
+            if (l <= 0) pos = r;
+            if (r >= slot->cap + 1) pos = l;
+            if (!(pos >= 1 && pos <= slot->cap)) {
+                printf("p = %lld, l = %lld, r = %lld\n", p, l, r);
+                debug("pos = %lld\n", pos);
+                slot_print(slot);
 
-            debug("l = %lld, r = %lld, pos = %lld\n", l, r, pos);
+                perror("Error: slot_insert");
+                exit(0);
+            }
+            final_bike.pos = frac_new(pos, 1);
         } else {
-            debug("Hi 5\n");
             // The position is not occupied, insert directly
             // do nothing
         }
@@ -472,24 +505,6 @@ void slot_erase(Slot *slot, Frac pos) {
         slot->head = headnode_new(slot->sqrt_cap);
         slot->tail = slot->head;
     }
-}
-
-void slot_print(Slot *slot) {
-    printf("---------- Slot ----------\n");
-    HeadNode *cur = slot->head;
-    while (cur != NULL) {
-        BikeNode *x = cur->head;
-        while (x != NULL) {
-            // printf("(");
-            frac_print(x->bike.pos);
-            printf(" ");
-            // printf(", %lld) ", x->bike.owner);
-            x = x->next;
-        }
-        cur = cur->next;
-        printf("\n");
-    }
-    printf("--------------------------\n");
 }
 
 /*
