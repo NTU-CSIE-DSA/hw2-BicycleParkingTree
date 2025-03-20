@@ -112,7 +112,7 @@ gen_sub5 100 100 1000 bogn98us2
 gen_sub5 5 300000 100000 bons88us2
 gen_sub5 5 300000 100000 bon97dus2
 gen_sub5 100 300000 100000 boddnmussss2
-gen_sub5 100 300000 100000 bodndunssdss2
+manual 5_private-10.in
 
 @testset 6_public
 gen_sub6 100 100 1000 bonus
