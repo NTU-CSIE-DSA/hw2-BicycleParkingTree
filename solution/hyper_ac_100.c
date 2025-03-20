@@ -85,30 +85,9 @@ Frac frac_new(int numerator, int denominator) {
     return frac;
 }
 
-Frac frac_add(Frac a, Frac b) {
+Frac frac_ave(Frac a, Frac b) {
     int num = a.p * b.q + b.p * a.q;
-    int den = a.q * b.q;
-    return frac_new(num, den);
-}
-
-Frac frac_sub(Frac a, Frac b) {
-    int num = a.p * b.q - b.p * a.q;
-    int den = a.q * b.q;
-    return frac_new(num, den);
-}
-
-Frac frac_mul(Frac a, Frac b) {
-    int num = a.p * b.p;
-    int den = a.q * b.q;
-    return frac_new(num, den);
-}
-
-Frac frac_div(Frac a, Frac b) {
-    if (b.p == 0) {
-        exit(-1);
-    }
-    int num = a.p * b.q;
-    int den = a.q * b.p;
+    int den = a.q * b.q * 2;
     return frac_new(num, den);
 }
 
@@ -168,7 +147,6 @@ void pq_push(PriorityQueue *pq, Info info) {
     pq->size++;
     int i = pq->size - 1;
     pq->data[i] = info;
-
     while (i != 0 && pq->data[(i - 1) / 2].t > pq->data[i].t) {
         swap(&pq->data[i], &pq->data[(i - 1) / 2]);
         i = (i - 1) / 2;
@@ -179,15 +157,8 @@ void heapify(PriorityQueue *pq, int i) {
     int smallest = i;
     int left = 2 * i + 1;
     int right = 2 * i + 2;
-
-    if (left < pq->size && pq->data[left].t < pq->data[smallest].t) {
-        smallest = left;
-    }
-
-    if (right < pq->size && pq->data[right].t < pq->data[smallest].t) {
-        smallest = right;
-    }
-
+    if (left < pq->size && pq->data[left].t < pq->data[smallest].t) smallest = left;
+    if (right < pq->size && pq->data[right].t < pq->data[smallest].t) smallest = right;
     if (smallest != i) {
         swap(&pq->data[i], &pq->data[smallest]);
         heapify(pq, smallest);
@@ -199,7 +170,6 @@ void pq_pop(PriorityQueue *pq) {
         pq->size--;
         return;
     }
-
     pq->data[0] = pq->data[pq->size - 1];
     pq->size--;
     heapify(pq, 0);
@@ -243,7 +213,6 @@ void dfs(int u, int p) {
 
 void preprocess_lca() {
     dfs(0, -1);
-
     for (int j = 1; j < LOGN; j++) {
         for (int i = 0; i < par_num; i++) {
             if (parent[i][j - 1] != -1) {
@@ -259,22 +228,18 @@ int lca(int u, int v) {
         u = v;
         v = t;
     }
-
     for (int i = LOGN - 1; i >= 0; i--) {
         if (parent[u][i] != -1 && depth[parent[u][i]] >= depth[v]) {
             u = parent[u][i];
         }
     }
-
     if (u == v) return u;
-
     for (int i = LOGN - 1; i >= 0; i--) {
         if (parent[u][i] != parent[v][i]) {
             u = parent[u][i];
             v = parent[v][i];
         }
     }
-
     return parent[u][0];
 }
 
@@ -344,8 +309,8 @@ Frac park_bike(int s, int x, int p) {
         // find the bike index at position p
         int idx = 0;
         while (idx < slot->bike_num && frac_cmp(slot->bikes[idx].pos, frac_new(p, 1)) < 0) idx++;
-        Frac pos = frac_div(frac_add(slot->bikes[idx - 1].pos, slot->bikes[idx].pos), frac_new(2, 1));
-        if (idx == 0) pos = frac_div(frac_add(slot->bikes[idx].pos, slot->bikes[idx + 1].pos), frac_new(2, 1));
+        Frac pos = frac_ave(slot->bikes[idx - 1].pos, slot->bikes[idx].pos);
+        if (idx == 0) pos = frac_ave(slot->bikes[idx].pos, slot->bikes[idx + 1].pos);
         slot_insert_bike(slot, s, pos);
         debug(">>> insert at middle\n");
         return pos;

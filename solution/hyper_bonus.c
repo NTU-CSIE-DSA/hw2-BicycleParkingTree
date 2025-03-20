@@ -548,64 +548,108 @@ Frac prev_pos[MN];
 
 /*
 ------------------------------
-Handle tree distance
+asdfasdfasdfdasfasddf
 ------------------------------
 */
 
+int fetch_delay[MN];
+int chain_top[MN];
+int order[MN];
+int parent[MN];
+int subtree_size[MN];
+int link[MN];
+int depth[MN];
+int bit[MN + 1];
 Vec *graph[MN];
-int parent[MN][LOGN], depth[MN], dist[MN];
 
-void dfs(int u, int p) {
-    for (int i = 0; i < graph[u]->size; i++) {
-        pii v = vec_at(graph[u], i);
-        if (v.x != p) {
-            parent[v.x][0] = u;
-            dist[v.x] = dist[u] + v.y;
-            depth[v.x] = depth[u] + 1;
-            dfs(v.x, u);
+int bit_range_query(int left, int right);
+
+void bit_update(int index, int value) {
+    int original_value = bit_range_query(index, index);
+    int difference = value - original_value;
+    for (int i = index; i <= par_num; i += (i & -i)) {
+        bit[i] += difference;
+    }
+}
+
+int bit_prefix_sum(int index) {
+    int ret = 0;
+    for (int i = index; i > 0; i -= (i & -i)) {
+        ret += bit[i];
+    }
+    return ret;
+}
+
+int bit_range_query(int left, int right) {
+    return bit_prefix_sum(right) - bit_prefix_sum(left - 1);
+}
+
+void find_parent(signed now, int par) {
+    parent[now] = par;
+    subtree_size[now] = 1;
+    link[now] = -1;
+    depth[now] = depth[par] + 1;
+    int max_subtree_size = 0;
+    for (int i = 0; i < graph[now]->size; ++i) {
+        pii next = vec_at(graph[now], i);
+        if (next.x == par) continue;
+        find_parent(next.x, now);
+        subtree_size[now] += subtree_size[next.x];
+        if (subtree_size[next.x] > max_subtree_size) {
+            max_subtree_size = subtree_size[next.x];
+            link[now] = next.x;
         }
     }
 }
 
-void preprocess_lca() {
-    dfs(0, -1);
-    for (int j = 1; j < LOGN; j++) {
-        for (int i = 0; i < par_num; i++) {
-            if (parent[i][j - 1] != -1) {
-                parent[i][j] = parent[parent[i][j - 1]][j - 1];
-            }
+void build_chain(signed now, int ct) {
+    static int stamp = 1;
+    order[now] = stamp++;
+    chain_top[now] = ct;
+    if (link[now] != -1) {
+        build_chain(link[now], ct);
+    }
+    for (int i = 0; i < graph[now]->size; ++i) {
+        pii next = vec_at(graph[now], i);
+        if (order[next.x] == 0) {
+            build_chain(next.x, next.x);
         }
     }
 }
 
-int lca(int u, int v) {
-    if (depth[u] < depth[v]) {
-        int t = u;
-        u = v;
-        v = t;
+void build_bit(int now, int par) {
+    for (int i = 0; i < graph[now]->size; ++i) {
+        pii next = vec_at(graph[now], i);
+        if (next.x == par) continue;
+        bit_update(order[next.x], next.y);
+        build_bit(next.x, now);
     }
-    for (int i = LOGN - 1; i >= 0; i--) {
-        if (parent[u][i] != -1 && depth[parent[u][i]] >= depth[v]) {
-            u = parent[u][i];
-        }
-    }
-    if (u == v) return u;
-    for (int i = LOGN - 1; i >= 0; i--) {
-        if (parent[u][i] != parent[v][i]) {
-            u = parent[u][i];
-            v = parent[v][i];
-        }
-    }
-    return parent[u][0];
 }
 
-int distance(int u, int v) {
-    return dist[u] + dist[v] - 2 * dist[lca(u, v)];
+int find_dis(int from, int to) {
+    int ret = 0;
+    while (chain_top[from] != chain_top[to]) {
+        if (depth[chain_top[from]] < depth[chain_top[to]]) {
+            int tp = from;
+            from = to;
+            to = tp;
+        }
+        ret += bit_range_query(order[chain_top[from]], order[from]);
+        from = parent[chain_top[from]];
+    }
+    if (depth[from] > depth[to]) {
+        int tp = from;
+        from = to;
+        to = tp;
+    }
+    ret += bit_range_query(order[from], order[to]);
+    ret -= bit_range_query(order[from], order[from]);
+    return ret;
 }
 
 /*
 ------------------------------
-End of tree distance
+asdfsaasdfasdfasdfd
 ------------------------------
 */
 
@@ -632,7 +676,7 @@ void move(int s, int y, int p) {
         return;
     }
 
-    int t = distance(x, y);
+    int t = find_dis(x, y);
     printf("%lld moved to %lld in %lld seconds.\n", s, y, t);
 
     slot_erase(slots[x], prev_pos[s]);
@@ -697,6 +741,12 @@ void fetch(int t) {
 }
 
 void rebuild(int x, int y, int d) {
+    if (depth[x] > depth[y]) {
+        int tmp = x;
+        x = y;
+        y = tmp;
+    }
+    bit_update(order[y], d);
 }
 
 signed main() {
@@ -714,7 +764,10 @@ signed main() {
         vec_push_back(graph[v], (pii){u, w});
     }
 
-    preprocess_lca();
+    // preprocess_lca();
+    find_parent(0, 0);
+    build_chain(0, 0);
+    build_bit(0, 0);
     pq = pq_new(stu_num);
 
     while (q--) {
