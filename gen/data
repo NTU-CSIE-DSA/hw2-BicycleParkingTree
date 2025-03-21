@@ -10,6 +10,12 @@ manual 2-02.in
 @testset sample4
 manual 3-02.in
 
+@testset sample5
+manual 4-01.in
+
+@testset sample6
+manual 5-01.in
+
 @testset 1_public
 gen_sub1 5 10 10 OwO
 gen_sub1 5 100 100 abc
@@ -162,6 +168,8 @@ gen_sub6 300000 300000 100000 bod2nsdss
 @include sample2
 @include sample3
 @include sample4
+@include sample5
+@include sample6
 
 @subtask subtask1
 @include sample1
@@ -199,6 +207,7 @@ gen_sub6 300000 300000 100000 bod2nsdss
 @include sample2
 @include sample3
 @include sample4
+@include sample5
 @include 1
 @include 2
 @include 3
@@ -210,6 +219,7 @@ gen_sub6 300000 300000 100000 bod2nsdss
 @include sample2
 @include sample3
 @include sample4
+@include sample6
 @include 1
 @include 2
 @include 3

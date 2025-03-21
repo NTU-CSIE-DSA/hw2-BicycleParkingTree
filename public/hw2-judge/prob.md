@@ -14,7 +14,7 @@ There are $5 + 1$ types of operations:
 1. Park $s, x, p$: Student $s$ park a bicycle at a parking slot $x$ with relative position $p$. The parking policy is as follows.
     - If the parking slot has empty space at $p$, the student park zir bicycle at $p$.
     - If there's another vacancy in the same parking slot. Ze will select the nearest empty space in $x$. If there's two nearest vacancy, ze will choose the one with smaller corrdinate.
-    - Otherwise, ze will insert zir bicycle at the middle of two bicycles that at right of $p$ and $p$. For example, if the parking slot with capacity $3$ have `1 2 3` occupied, and one wants to park at 3, ze will park at `5/2`. However, if ze want to park at 1, ze will park at `1/2` instead. That is, we always consider the border of the parking slot to be a occupied space.
+    - Otherwise, ze will insert zir bicycle at the middle of two bicycles that at left of $p$ and $p$. For example, if the parking slot with capacity $3$ have `1 2 3` occupied, and one wants to park at 3, ze will park at `5/2`. However, if ze want to park at 1, ze will park at `3/2` instead. That is, we always consider the border of the parking slot to be a occupied space.
 2. Move $s, y, p$: Student $s$ moves zir bicycle from the parking slot $x$ ze parked to another parking slot $y$ with relative position $p$. You have to calculate traval time from $x$ to $y$. The parking policy is the same as the first operation. If $x = y$, let the traval time be $0$ and **do not** move the bicycle.
 3. Clear $x, t$: At time $t$, clear a parking slot $x$ by relocate all bicycles to Shuiyuan. Those owners $O$ of the relocated bicycle will be notified after $l_i, i \in O$
 4. Rearrange $x, t$: At time $t$, relocate all rule violating bicycles from the parking slot $x$ to Shuiyuan. Those owners $O$ of the relocated bicycle will be notified after $l_i, i \in O$
@@ -30,19 +30,23 @@ There are $5 + 1$ types of operations:
 1. $s, x, p$: Insert $s$ in vertex $x$ at $p$. The insertion policy is as follows.
     - If $p$ is not occupied, insert $s$ at $p$.
     - If there exists an integer $p'$ such that $p'$ is not occupied in $x$. Insert $s$ at the nearest empty space in $x$.
-    - Otherwise, let $p'$ be the maximum element less than $p$ in $x$. For example, if $x$ with capacity $3$ have `1 2 3` occupied, and there is an insertion at 3, insert $s$ at `5/2`. However, if inserting at 1, you will insert $s$ at `1/2` instead. That is, we always consider the border of the coordinate system to be an occupied space.
-2. $s, y, p$: Move an element $s$ from $x$ (last inserted vertex) to $y$ at $p$ and print the total weight $\displaystyle\sum_{e\in \text{path(x, y)}}{w(x, y)}$. The insertion policy is the same as the first operation. If $x = y$, the path weight should be $0$, and **do not** move the element.
+    - Otherwise, let $p'$ be the maximum element less than $p$ in $x$. Ze will insert it at $\displaystyle\frac{p' + p}{2}$. For example, if $x$ with capacity $3$ have `1 2 3` occupied, and there is an insertion at 3, insert $s$ at `5/2`. However, if inserting at 1, you will insert $s$ at `3/2` instead. That is, we always consider the border of the coordinate system to be an occupied space.
+2. $s, y, p$: Move an element $s$ from $x$ (last inserted vertex) to $y$ at $p$ and print the total weight $\displaystyle\sum_{e\in \text{path(x, y)}}{w(e.u, e.v)}$. The insertion policy is the same as the first operation. If $x = y$, the path weight should be $0$, and **do not** move the element.
 3. Clear $x, t$: At time $t$, clear $x$ by relocate all elements to a special vertex $S$ with infinite capacity. An element $i$ can be removed by fetch operation after timepoint $t + l_i$.
 4. Rearrange $x, t$: At time $t$, relocate all elements with non-integer $p$ from $x$ to $S$. An element $i$ can be removed by fetch operation after timepoint $t + l_i$.
-5. Fetch $t$: At time $t$, some $s$'s satisified certain condition will fetch elements from $S$. The condition is that $t_b + l_i < t, \forall i \in S$, where $t_b$ is the time when $i$ be relocated to $S$. Those elements may be inserted into tree later.
+5. Fetch $t$: At time $t$, some $s$'s satisified certain condition will fetch elements from $S$. The condition is that $t_b + l_i \leq t, \forall i \in S$, where $t_b$ is the time when $i$ be relocated to $S$. Those elements may be inserted into tree later.
 6. Bonus: $x, y, d$: Adjust the $w(x, y)$ becomes $d$, it is garenteed that $x$ and $y$ is connected before this type of operation.
+
+## Illustration
+
+![parking_slot](https://hackmd.io/_uploads/Bk2iMgwh1x.png)
 
 ## Input
 
 - The first line contains three integers $n$, $m$, and $q$ representing the number of parking slots, the number of students, and the number of operations, respectively.
 - The second line contains $n$ integers representing the capacity for each parking slot $c_x$. The id of the parking slot $x \in [0, n-1]$
 - The third line contains $m$ integers representing the fetch time for each student. That is, the $i$-th student will fetch the bicycle at least $l_i$ minutes after zir bicycle being relocated.
-- The next $n-1$ lines contain three integers $u$, $v$, and $d$ representing the parking slot $u$ and $v$ are connected with travel time $w$.
+- The next $n-1$ lines contain three integers $x$, $y$, and $d$ representing the parking slot $u$ and $v$ are connected with travel time $d$/$w(x,y)$.
 - The next $q$ lines contain the operations.
 
 For each operation:
@@ -111,40 +115,29 @@ For each operation:
 - $1 \leq q \leq 3 \times 10^2$
 - Only operations 1 and 2 are present.
 
-Expected solution, simple simulation without Shuiyuan.
-
 ### Subtask 2 (20pt)
 
 - $1 \leq n, m \leq 3 \times 10^2$
 - $1 \leq q \leq 10^3$
 - Only operations 1, 2, 3, 4, and 5 are present.
 
-Expected solution, harder simulation.
-
 ### Subtask 3 (20pt)
 
 - $1 \leq n \leq 3 \times 10^2$
 - Only operations 1, 2, 3, 4, and 5 are present.
 
-Expected solution, use min heap for operation 5. 
-
 ### Subtask 4 (50pt)
 
 - Only operations 1, 2, 3, 4, and 5 are present.
 
-Expected solution, use prefix sum on the tree for operation 2.
-
-### Subtask 5 (Bonus: 20pt)
+### Subtask 5 (Bonus: 30pt)
 
 - $\forall j \in [0, n), 2 \leq c_j \leq 10 ^ 6$
 - Only operations 1, 2, 3, 4, and 5 are valid.
-<!-- - Invalid operations present. If you found an invalid solution, you should ignore it. -->
 
 ### Subtask 6 (Bonus: free snacks | beverages)
 
 - All operations are present.
-
-Expected solution, use heavy-light decomposition on the tree for operation 2.
 
 ## Sample Testcases
 
@@ -254,17 +247,68 @@ At 6, 3 bicycles was fetched.
 
 ```
 
-<!-- ### Sample Input 5
+### Sample Input 5
 
 ```
+1 10 7
+774086
+0 0 0 0 0 0 0 0 0 0
+0 9 0 33521
+0 7 0 262833
+0 3 0 724721
+0 0 0 61795
+0 4 0 291710
+0 6 0 10365
+0 8 0 702477
 
 ```
 
 ### Sample Output 5
 
 ```
+9 parked at (0, 33521).
+7 parked at (0, 262833).
+3 parked at (0, 724721).
+0 parked at (0, 61795).
+4 parked at (0, 291710).
+6 parked at (0, 10365).
+8 parked at (0, 702477).
 
-``` -->
+```
+
+### Sample Input 6
+```
+5 10 10
+5 10 6 11 2
+0 0 0 0 0 0 0 0 0 0
+3 0 49410
+3 2 54898
+2 1 76874
+4 1 14829
+0 6 4 1
+5 3 0 315398
+0 0 4 1
+0 3 4 2
+0 2 4 1
+2 4 18337236
+0 7 2 4
+1 7 2 5
+0 4 0 3
+2 2 37134602
+
+```
+
+### Sample Output 6
+```
+6 parked at (4, 1).
+0 parked at (4, 2).
+3 parked at (4, 3/2).
+2 parked at (4, 5/4).
+7 parked at (2, 4).
+7 moved to 2 in 0 seconds.
+4 parked at (0, 3).
+
+```
 
 ## Hints
 
