@@ -1,5 +1,5 @@
 {
-    "bonus.cpp": { "verdict": "model_solution" },
+    "hyper_bonus.cpp": { "verdict": "model_solution" },
     "correct.cpp": { "verdict": "partially_correct" },
     "claudeAI.cpp": { "verdict": "incorrect" }
 }

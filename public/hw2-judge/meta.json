@@ -5,7 +5,7 @@
     "testdata": [
         {
             "points": 0,
-            "tests": ["sample1-01", "sample2-01", "sample3-01", "sample4-01"]
+            "tests": ["sample1-01", "sample2-01", "sample3-01", "sample4-01", "sample5-01", "sample6-01"]
         },
         {
             "points": 10,
@@ -78,7 +78,7 @@
         {
             "points": 20,
             "tests": [
-                "sample1-01", "sample2-01", "sample3-01", "sample4-01",
+                "sample1-01", "sample2-01", "sample3-01", "sample4-01", "sample5-01",
                 "1_public-01", "1_public-02", "1_public-03", "1_public-04", "1_public-05",
                 "1_public-06", "1_public-07",
                 "1_private-01", "1_private-02", "1_private-03", "1_private-04", "1_private-05",
@@ -103,7 +103,7 @@
         {
             "points": 0,
             "tests": [
-                "sample1-01", "sample2-01", "sample3-01", "sample4-01",
+                "sample1-01", "sample2-01", "sample3-01", "sample4-01", "sample6-01",
                 "1_public-01", "1_public-02", "1_public-03", "1_public-04", "1_public-05",
                 "1_public-06", "1_public-07",
                 "1_private-01", "1_private-02", "1_private-03", "1_private-04", "1_private-05",
