@@ -1,41 +1,46 @@
 ## Problem Description
 
-We provide two versions of the problem statement below: one with a story and one in a formal
-representation. Feel free to read either or both, depending on your preference.
+In this problem, we will provide you with a story version, and an equivalent formal version. Please feel free to decide what version(s) you want to read to solve the problem.
 
 ### Story Version
 
-There are numerous bikes in NTU, and the parking lots are scarce. Thus, students end up pushing other students' bikes into tight places, and the area gets crowded. Not only are the students unable to easily locate the bikes when leaving, but the bikes are also at greater risks of theft. In a bid to fully understand the problem, the NTU's General Affairs Office has decided to model students' parking trends.
+NTU has a high number of bikes, but parking spaces are limited. As a result, students often squeeze others' bikes into tight spots, leading to overcrowding. This not only makes it difficult for students to locate their bikes when leaving but also increases the risk of theft. To better understand the issue, NTU's General Affairs Office has decided to analyze students' parking patterns.
 
-To simplify the analysis, each parking slot is considered a vertex, and these slots together form a tree structure. There is a coordinate system $[1, c_j]$ in a parking slot $j$ with capacity $c_j$. Each slot can accommodate one or more bicycles. Students are allowed to park their bicycles at any slot and move them between slots as needed. However, to maintain order and cleanliness, the university periodically clears and rearranges the parking areas. Bicycles that violate regulations will be relocated to Shuiyuan. If students wish to retrieve their bicycles, they must go to Shuiyuan and pay an additional fee.
+To simplify the analysis, each parking slot is considered a node, and these slots together form a tree connected by trails. That is, there will be a unique path of trails from one slot to any other slot. We represent $w(x, y)$ as the travel time through the trail that connects slots $x$ and $y$ in the tree structure. Then, for any unique path from slot $x$ to slot $z$, the total travel time is the sum of the times on the trails within the path.
+
+There is a coordinate system $[1, c_x]$ in a parking slot $x$ with a designed capacity $c_x$. Each slot is designed to accommodate one or more bikes. Students are allowed to park their bikes in any slot and move them between slots as needed. However, to maintain order and cleanliness, the university periodically clears and rearranges the parking slots, relocating some bikes to Shuiyuan. The students need to go to Shuiyuan on school buses to rescue their bikes after being notified.
 
 There are $5 + 1$ types of operations:
 
-1. Park $s, x, p$: Student $s$ park a bicycle at a parking slot $x$ with relative position $p$. The parking policy is as follows.
-    - If the parking slot has empty space at $p$, the student park zir bicycle at $p$.
-    - If there's another vacancy in the same parking slot. Ze will select the nearest empty space in $x$. If there's two nearest vacancy, ze will choose the one with smaller corrdinate.
-    - Otherwise, ze will insert zir bicycle at the middle of two bicycles that at left of $p$ and $p$. For example, if the parking slot with capacity $3$ have `1 2 3` occupied, and one wants to park at 3, ze will park at `5/2`. However, if ze want to park at 1, ze will park at `3/2` instead. That is, we always consider the border of the parking slot to be a occupied space.
-2. Move $s, y, p$: Student $s$ moves zir bicycle from the parking slot $x$ ze parked to another parking slot $y$ with relative position $p$. You have to calculate traval time from $x$ to $y$. The parking policy is the same as the first operation. If $x = y$, let the traval time be $0$ and **do not** move the bicycle.
-3. Clear $x, t$: At time $t$, clear a parking slot $x$ by relocate all bicycles to Shuiyuan. Those owners $O$ of the relocated bicycle will be notified after $l_i, i \in O$
-4. Rearrange $x, t$: At time $t$, relocate all rule violating bicycles from the parking slot $x$ to Shuiyuan. Those owners $O$ of the relocated bicycle will be notified after $l_i, i \in O$
-5. Fetch $t$: At time $t$, there's a school bus from the NTU to Shuiyuan. Students who are informed to fetch their bicycles will all go to Shuiyuan by this bus together. Those bicycle may be parked later. (This behavior is actually different from the reality. Thus, please read the operation description carefully.)
-6. Bonus: rebuild $x, y, d$: Sometimes, the Dwellers and Student Affairs want to adjust the road so that the students' traval time between $x$ and $y$ becomes $d$, it is garenteed that $x$ and $y$ is connected before this type of operation.
+1. Park $s, x, p$: Student $s$ parks a bike at the parking slot $x$ with intended position $p$. The parking policy is as follows.
+    - If the parking slot has an empty space at $p$, the student parks zir bike at $p$.
+    - Otherwise, if there is another vacancy (i.e. an integer location $p'$ that is not occupied) in the same parking slot. Ze will select the nearest empty space in $x$. If there are two nearest vacancies, ze will choose the one with a smaller value.
+    - Otherwise, $p$ (and other integer positions) must be occupied. If the left-most bike is not parked at $p$, ze will insert zir bike in the middle of two bikes that are to the left of $p$ and $p$. For example, if the parking slot with capacity $3$ has `1 2 3` occupied, and one wants to park at position `3`, ze will park at `5/2`. 
+    - Otherwise, the left-most bike is parked at $p$. Then, ze will insert zir bike the middle of two bikes that are to the right of $p$ and $p$. For example, if the parking slot with capacity $3$ has `1 3/2 2 3` occupied, and one wants to park at position `1`, ze will park at `5/4`. 
+2. Move $s, y, p$: Student $s$ moves zir bike from the parking slot that ze has parked (called $x$) to another parking slot $y$ with intended position $p$. Please calculate the travel time from $x$ to $y$. The parking policy is the same as the type-1 operation. If $x = y$, the bike **will not be moved at all** (i.e. the position will not be changed) and the travel time is $0$.
+3. Clear $x, t$: At time $t$, clear a parking slot $x$ and relocate all bikes to Shuiyuan. Each student  $s$ of the relocated bikes will be notified at time $t + \ell_s$ that zir bike has been relocated.
+4. Rearrange $x, t$: At time $t$, relocate all \textbf{rule-violating} bikes in slot $x$ to Shuiyuan. The rule-violating bikes are those parked in non-integer positions of $x$. Each student $s$ of the relocated bikes will be notified at time $t + \ell_s$ that zir bike has been relocated.
+5. Fetch $t$: At time $t$, there is a school bus from the NTU to Shuiyuan. Students who have been notified to fetch their bikes, including those who have been notified at time $t$, will go to Shuiyuan by this bus together to rescue their bikes. After rescuing, the student will wander around on zir bike without parking them. That is, those bike will not be parked immediately---they will be parked with type-1 operation later.
+6. Rebuild $x, y, d$ (bonus): Sometimes, the Dwellers and Student Affairs want to adjust the trail so that $w(x, y)$ is changed to $d > 0$. It is guaranteed that there is a trail between $x$ and $y$ within the original tree-structured slots.
 
 ## Formal Version
 
-Given a weighted tree $G(V, E), |V| = n, |E| = n - 1$. There is a coordinate system in each vertex. The coordinate system is limited to $[1, c_j], \forall j \in [0, n)$. You should support the following operations. We denote the undirected edge weight between $x$ and $y$ to be $w(x, y)$.
+Given a weighted tree $T(V, E), |V| = n, |E| = n - 1$, where $V = \{0, 1, \ldots, n-1\}$ represents its nodes and $E$ represents its edges, with some weight $w(x, y) > 0$ on each $(x, y) \in E$. For each node $x \in V$, consider some integer $c_x > 0$ as the capacity of slot $x$. Consider $m$ users $\{0, 1, \ldots, m-1\}$, where each user $s$ comes with a parameter $\ell_s > 0$. Also, consider an empty set $S$. There are $5 + 1$ types of operations:
 
 There are $5 + 1$ types of operations:
 
-1. $s, x, p$: Insert $s$ in vertex $x$ at $p$. The insertion policy is as follows.
-    - If $p$ is not occupied, insert $s$ at $p$.
-    - If there exists an integer $p'$ such that $p'$ is not occupied in $x$. Insert $s$ at the nearest empty space in $x$.
-    - Otherwise, let $p'$ be the maximum element less than $p$ in $x$. Ze will insert it at $\displaystyle\frac{p' + p}{2}$. For example, if $x$ with capacity $3$ have `1 2 3` occupied, and there is an insertion at 3, insert $s$ at `5/2`. However, if inserting at 1, you will insert $s$ at `3/2` instead. That is, we always consider the border of the coordinate system to be an occupied space.
-2. $s, y, p$: Move an element $s$ from $x$ (last inserted vertex) to $y$ at $p$ and print the total weight $\displaystyle\sum_{e\in \text{path(x, y)}}{w(e.u, e.v)}$. The insertion policy is the same as the first operation. If $x = y$, the path weight should be $0$, and **do not** move the element.
-3. Clear $x, t$: At time $t$, clear $x$ by relocate all elements to a special vertex $S$ with infinite capacity. An element $i$ can be removed by fetch operation after timepoint $t + l_i$.
-4. Rearrange $x, t$: At time $t$, relocate all elements with non-integer $p$ from $x$ to $S$. An element $i$ can be removed by fetch operation after timepoint $t + l_i$.
-5. Fetch $t$: At time $t$, some $s$'s satisified certain condition will fetch elements from $S$. The condition is that $t_b + l_i \leq t, \forall i \in S$, where $t_b$ is the time when $i$ be relocated to $S$. Those elements may be inserted into tree later.
-6. Bonus: $x, y, d$: Adjust the $w(x, y)$ becomes $d$, it is garenteed that $x$ and $y$ is connected before this type of operation.
+1. Park $s, x, p$: Insert $s$ in node $x$ at $p$ with the following policy.
+    - If no $(*, p)$ is in $x$, insert $(s, p)$ to $x$.
+    - Otherwise, if there is an integer $p' \in [1, c_x]$ such that no $(*, p')$ is $x$, insert $(s, p')$ with the smallest $|p' - p|$ to $x$. Ties are broken by inserting the $(s, p')$ with a smaller~$p'$.
+    - Otherwise, if $p \neq \min\limits_{(*, q) \in x} q$, let $p' = \max\limits_{(*, q) \in x, q < p} q$. Insert $(s, \frac{p+p'}{2})$ to $x$.
+    - Otherwise, $p = \min\limits_{(*, q) \in x} q$, let $p' = \min\limits_{(*, q) \in x, q > p} q$. Insert $(s, \frac{p+p'}{2})$ to $x$.
+2. Move $s, y, p$: Find $(s, q)$ from some $(s, *) \in x$ for a unique node $x$. 
+    - If $x \neq y$, remove $(s, q)$ from $x$. Then, calculate $\sum\limits_{(a, b) \text{ on path  between } (x, y)} w(a, b)$ and execute similar to the type-1 operation of Park $(s, y, p)$.
+    - If $x = y$, output $0$ and do nothing else.
+3. Clear $x, t$: At time $t$, clear every item $(s, *) \in x$ and insert $(s, t+\ell_s)$ to $S$.
+4. Rearrange $x, t$: At time $t$, clear every item $(s, p) \in x$ where $p$ is not an integer and insert $(s, t+\ell_s)$ to $S$.
+5. Fetch $t$: At time $t$, remove every $(s, t') \in S$ with $t' \le t$.
+6. Rebuild $x, y, d$ (bonus): Change the $w(x, y)$ for some $(x, y) \in E$ to $d$.
 
 ## Illustration
 
@@ -43,13 +48,11 @@ There are $5 + 1$ types of operations:
 
 ## Input
 
-- The first line contains three integers $n$, $m$, and $q$ representing the number of parking slots, the number of students, and the number of operations, respectively.
-- The second line contains $n$ integers representing the capacity for each parking slot $c_x$. The id of the parking slot $x \in [0, n-1]$
-- The third line contains $m$ integers representing the fetch time for each student. That is, the $i$-th student will fetch the bicycle at least $l_i$ minutes after zir bicycle being relocated.
-- The next $n-1$ lines contain three integers $x$, $y$, and $d$ representing the parking slot $u$ and $v$ are connected with travel time $d$/$w(x,y)$.
-- The next $q$ lines contain the operations.
-
-For each operation:
+- The first line contains three integers $n$, $m$, and $q$ representing the number of parking slots (tree nodes), the number of students (users), and the number of operations, respectively.
+- The second line contains $n$ integers representing the capacity for each parking slot (tree nodes) $c_x$ for $x \in \{0, 1, \dots, n-1\}$.
+- The third line contains $m$ integers representing the fetch time $\ell_s$ for each student (user) $s$ for $s \in \{0, 1, \dots, m-1\}$.
+- The next $n-1$ lines contain three integers $x$, $y$, and $w$ representing the parking slots (tree nodes) $x$ and $y$ are connected by a trail (edge) with travel time (weight) $w$.
+- The next $q$ lines contain the operations. For each operation:
 
 1. Park: `0 s x p`
 2. Move: `1 s y p`
@@ -58,54 +61,53 @@ For each operation:
 5. Fetch: `4 t`
 6. Rebuild: `5 x y d`
 
-Note that the unit of $t$ is always second(s).
+Both $\ell_u$ and $t$ are measured by seconds.
 
 ## Output
 
-For each operation:
+For each operation, output the following.
 
-1. Park: output the relative position of the bicycle in the parking slot.
+1. Park:
     ```
     [s] parked at ([x], [fp]).
     ```
-    where $fp$ is the final location of the bicycle/element. The rational number $\frac{p}{q}$ is represented as `p/q`. If the denomitor $q$ is $1$, simply output $p$.
-2. Move: output the relative position and the travel time/total weight $t$ of the bicycle in the parking slot $y$.
+    where $\text{fp}$ is the final location of the bike (the second part of the pair being inserted to $x$). Display $\text{fp}$ by an irreducible fraction of `p/q`. If $q = 1$, you should output only `p`.
+2. Move:
     ```
     [s] moved to [y] in [t] seconds.
     ```
-3. Clear: nothing
-4. Rearrange: output the number of bicycles/elements $n$ that are relocated.
+    You only need to output \texttt{seconds} in all cases, without changing to a singular form.
+3. Clear: output nothing
+4. Rearrange:
     ```
     Rearranged [n] bicycles in [x].
     ```
-5. Fetch: output the number of bicycles/elements that are fetched.
+5. Fetch:
     ```
     At [t], [n] bicycles was fetched.
     ``` 
-6. Rebuild: nothing
+6. Rebuild: output nothing
 
 ## Constraint
 
-- $1 \leq n, m \leq 3 \times 10^5$
-- $1 \leq q \leq 10^5$
+- $1 \leq n, m \leq 3 \times 10^5$, $1 \leq q \leq 10^5$
 - $0 \leq s < m$
 - $0 \leq x, y < n$
-- $0 \leq d \leq 10^{5}$
+- $0 \leq w(x, y) \leq 10^{5}$, $0 \leq d \leq 10^{5}$
 - $0 \leq t \leq 10^{15}$
-- $1 \leq p \leq c_x$
-- $\forall i \in [0, m), 0 \leq l_i \leq 10^6$
-- $\forall j \in [0, n), 2 \leq c_j \leq 15$
-- At any time, the number of bicycles/elements in a single (parking slot/vertex) $x$ will not exceed $2 \times c_j$.
-- The time $t$ in all operations are given in accending order.
+- $1 \leq p \leq c_x$ with $2 \leq c_x \leq 15$ for all $x \in \{0, 1, \dots, n-1\}$
+- $0 \leq \ell_s \leq 10^6$ for all $s \in \{0, 1, \ldots, m-1\}$
+- At any time, the number of bikes/elements in a single (parking slot/node) $x$ will not exceed $2 \times c_x$.
+- The time $t$ in all operations are given in an ascending order.
 
 For each operation:
 
-1. Park: It is guaranteed that the bicycle of student $s$ is not in any of the parking slots.
-2. Move: It is guaranteed that the bicycle of student $s$ is in a parking slot.
-3. Clear: It is guaranteed that the parking slot $x$ is not empty.
-4. Rearrange: It is guaranteed that the parking slot $x$ is not empty.
-5. Fetch: It is guaranteed that the fetch time is in ascending order.
-6. Rebuild: It is guaranteed that the parking slot $x$ and $y$ are connected.
+1. Park: It is guaranteed that the bike of student $s$ is not in any of the parking slots.
+1. Move: It is guaranteed that the bike of student $s$ is in a parking slot.
+1. Clear: It is guaranteed that the parking slot $x$ is not empty.
+1. Rearrange: It is guaranteed that the parking slot $x$ is not empty.
+1. Fetch: It is guaranteed that the fetch time is in ascending order.
+1. Rebuild: It is guaranteed that the parking slot $x$ and $y$ are connected by an original trail.
 
 ## Subtask
 
@@ -130,12 +132,12 @@ For each operation:
 
 - Only operations 1, 2, 3, 4, and 5 are present.
 
-### Subtask 5 (Bonus: 30pt)
+<!-- ### Subtask 5 (Bonus: 30pt)
 
 - $\forall j \in [0, n), 2 \leq c_j \leq 10 ^ 6$
-- Only operations 1, 2, 3, 4, and 5 are valid.
+- Only operations 1, 2, 3, 4, and 5 are valid. -->
 
-### Subtask 6 (Bonus: free snacks | beverages)
+### Subtask 5 (Bonus: Free Beverage)
 
 - All operations are present.
 
@@ -248,35 +250,6 @@ At 6, 3 bicycles was fetched.
 ```
 
 ### Sample Input 5
-
-```
-1 10 7
-774086
-0 0 0 0 0 0 0 0 0 0
-0 9 0 33521
-0 7 0 262833
-0 3 0 724721
-0 0 0 61795
-0 4 0 291710
-0 6 0 10365
-0 8 0 702477
-
-```
-
-### Sample Output 5
-
-```
-9 parked at (0, 33521).
-7 parked at (0, 262833).
-3 parked at (0, 724721).
-0 parked at (0, 61795).
-4 parked at (0, 291710).
-6 parked at (0, 10365).
-8 parked at (0, 702477).
-
-```
-
-### Sample Input 6
 ```
 5 10 10
 5 10 6 11 2
@@ -298,7 +271,7 @@ At 6, 3 bicycles was fetched.
 
 ```
 
-### Sample Output 6
+### Sample Output 5
 ```
 6 parked at (4, 1).
 0 parked at (4, 2).
@@ -309,18 +282,3 @@ At 6, 3 bicycles was fetched.
 4 parked at (0, 3).
 
 ```
-
-## Hints
-
-- You may want to use enum to represent the operations.
-    ```c
-    enum Operation {
-      PARK = 0,
-      MOVE = 1,
-      CLEAR = 2,
-      REARRANGE = 3,
-      FETCH = 4,
-      REBUILD = 5
-    };
-    ```
-- If you want to calculate the weight sum of the path, you can try prefix sum on tree.

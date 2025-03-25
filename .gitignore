@@ -2,6 +2,7 @@
 /tests/
 /logs/
 /public/tests
+/public/hw2-judge/testdata
 
 #Ignoring the extension-less executable binary in public/cpp
 /public/cpp/*

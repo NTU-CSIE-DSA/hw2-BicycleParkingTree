@@ -1,6 +1,6 @@
 {
     "name": "[HW2-P4] Bicycle Parking Tree",
-    "timeLimit": 1,
+    "timeLimit": 1.5,
     "hasSpecialJudge": false,
     "testdata": [
         {
@@ -73,31 +73,6 @@
                 "4_public-01", "4_public-02", "4_public-03", "4_public-04",
                 "4_private-01", "4_private-02", "4_private-03", "4_private-04", "4_private-05",
                 "4_private-06", "4_private-07", "4_private-08"
-            ]
-        },
-        {
-            "points": 20,
-            "tests": [
-                "sample1-01", "sample2-01", "sample3-01", "sample4-01", "sample5-01",
-                "1_public-01", "1_public-02", "1_public-03", "1_public-04", "1_public-05",
-                "1_public-06", "1_public-07",
-                "1_private-01", "1_private-02", "1_private-03", "1_private-04", "1_private-05",
-                "1_private-06", "1_private-07", "1_private-08", "1_private-09", "1_private-10",
-                "1_private-11", "1_private-12", "1_private-13", "1_private-14",
-                "2_public-01", "2_public-02", "2_public-03", "2_public-04", "2_public-05",
-                "2_public-06", "2_public-07",
-                "2_private-01", "2_private-02", "2_private-03", "2_private-04", "2_private-05",
-                "2_private-06", "2_private-07", "2_private-08", "2_private-09", "2_private-10",
-                "2_private-11", "2_private-12", "2_private-13", "2_private-14",
-                "3_public-01", "3_public-02", "3_public-03", "3_public-04",
-                "3_private-01", "3_private-02", "3_private-03", "3_private-04", "3_private-05",
-                "3_private-06", "3_private-07", "3_private-08",
-                "4_public-01", "4_public-02", "4_public-03", "4_public-04",
-                "4_private-01", "4_private-02", "4_private-03", "4_private-04", "4_private-05",
-                "4_private-06", "4_private-07", "4_private-08",
-                "5_public-01", "5_public-02", "5_public-03", "5_public-04", "5_public-05",
-                "5_private-01", "5_private-02", "5_private-03", "5_private-04", "5_private-05",
-                "5_private-06", "5_private-07", "5_private-08", "5_private-09", "5_private-10"
             ]
         },
         {
