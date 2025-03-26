@@ -44,7 +44,9 @@ There are $5 + 1$ types of operations:
 
 ## Illustration
 
-![parking_slot](https://hackmd.io/_uploads/Bk2iMgwh1x.png)
+<center>
+<img src="https://live.staticflickr.com/65535/54409011118_2826e1fdfc_k.jpg" width=550>
+</center>
 
 ## Input
 
@@ -66,26 +68,29 @@ Both $\ell_u$ and $t$ are measured by seconds.
 ## Output
 
 For each operation, output the following.
-
 1. Park:
-    ```
-    [s] parked at ([x], [fp]).
-    ```
+    <center>
+    <code>[s] parked at ([x], [fp]).</code>
+    </center>
     where $\text{fp}$ is the final location of the bike (the second part of the pair being inserted to $x$). Display $\text{fp}$ by an irreducible fraction of `p/q`. If $q = 1$, you should output only `p`.
 2. Move:
-    ```
-    [s] moved to [y] in [t] seconds.
-    ```
+    <center>
+    <code>[s] moved to [y] in [t] seconds.</code>
+    </center>
     You only need to output \texttt{seconds} in all cases, without changing to a singular form.
 3. Clear: output nothing
 4. Rearrange:
-    ```
+    <center>
+    <code>
     Rearranged [n] bicycles in [x].
-    ```
+    </code>
+    </center>
 5. Fetch:
-    ```
+    <center>
+    <code>
     At [t], [n] bicycles was fetched.
-    ``` 
+    </code>
+    </center>
 6. Rebuild: output nothing
 
 ## Constraint

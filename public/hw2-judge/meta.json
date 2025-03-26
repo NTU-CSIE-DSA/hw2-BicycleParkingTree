@@ -1,11 +1,11 @@
 {
-    "name": "[HW2-P4] Bicycle Parking Tree",
+    "name": "[HW2-P4] Dock Spot Arboretum",
     "timeLimit": 1.5,
-    "hasSpecialJudge": false,
+    "hasSpecialJudge": true,
     "testdata": [
         {
             "points": 0,
-            "tests": ["sample1-01", "sample2-01", "sample3-01", "sample4-01", "sample5-01", "sample6-01"]
+            "tests": ["sample1-01", "sample2-01", "sample3-01", "sample4-01", "sample6-01"]
         },
         {
             "points": 10,
