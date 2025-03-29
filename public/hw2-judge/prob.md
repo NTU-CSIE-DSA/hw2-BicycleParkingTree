@@ -180,7 +180,7 @@ For each operation:
 0 2 0 3
 0 3 0 3
 3 0 1
-0 3 0 3
+0 4 0 3
 
 ```
 
@@ -192,7 +192,7 @@ For each operation:
 2 parked at (0, 3).
 3 parked at (0, 5/2).
 Rearranged 1 bicycles in 0.
-3 parked at (0, 5/2).
+4 parked at (0, 5/2).
 
 ```
 
