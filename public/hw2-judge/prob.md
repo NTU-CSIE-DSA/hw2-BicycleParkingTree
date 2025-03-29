@@ -1,3 +1,11 @@
+## Modification Notes
+
+- **At any time, there's only one bicycle for each student in either Shuiyuan or the parking tree.**
+- **The time $t$ in all operations are given in an strictly ascending order.**
+- **At any time, the number `p/q` can be stored in two 64-bit integers.** 
+
+These three constraints have been added to the problem description. However, if you have already received an AC on the judge, these changes will not affect your score.
+
 ## Problem Description
 
 In this problem, we will provide you with a story version, and an equivalent formal version. Please feel free to decide what version(s) you want to read to solve the problem.
@@ -103,7 +111,8 @@ For each operation, output the following.
 - $1 \leq p \leq c_x$ with $2 \leq c_x \leq 15$ for all $x \in \{0, 1, \dots, n-1\}$
 - $0 \leq \ell_s \leq 10^6$ for all $s \in \{0, 1, \ldots, m-1\}$
 - At any time, the number of bikes/elements in a single (parking slot/node) $x$ will not exceed $2 \times c_x$.
-- The time $t$ in all operations are given in an ascending order.
+- The time $t$ in all operations are given in an strictly ascending order.
+- **At any time, there's only one bicycle for each student in either Shuiyuan or the parking tree.**
 
 For each operation:
 
@@ -111,7 +120,7 @@ For each operation:
 1. Move: It is guaranteed that the bike of student $s$ is in a parking slot.
 1. Clear: It is guaranteed that the parking slot $x$ is not empty.
 1. Rearrange: It is guaranteed that the parking slot $x$ is not empty.
-1. Fetch: It is guaranteed that the fetch time is in ascending order.
+1. Fetch: It is guaranteed that the fetch time is in strictly ascending order.
 1. Rebuild: It is guaranteed that the parking slot $x$ and $y$ are connected by an original trail.
 
 ## Subtask
