@@ -790,7 +790,7 @@ void fetch(struct bicycle_parking_tree *parking_tree, long long t) {
     fetched++;
     cds_heap_pop(&parking_tree->shuiyuan);
   }
-  printf("At %lld" ", %d bicycles was fetched.\n", t, fetched);
+  printf("At %lld" ", %d bikes was fetched.\n", t, fetched);
 }
 
 void rebuild(struct bicycle_parking_tree *parking_tree, size_t x, size_t y, long long d) {

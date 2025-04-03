@@ -461,12 +461,12 @@ void handle_commands(struct bicycle_parking_tree *parking_tree, size_t q) {
     size_t x, y, p;
     long long t, d;
     switch (op) {
-     case PARK:       assert(scanf("%d%zu%zu", &s, &x, &p) == 3);       park(parking_tree, s, x, p);    break;
-     case MOVE:       assert(scanf("%d%zu%zu", &s, &y, &p) == 3);       move(parking_tree, s, y, p);    break;
-     case CLEAR:      assert(scanf("%zu%lld", &x, &t) == 2);        clear(parking_tree, x, t);      break;
-     case REARRANGE:  assert(scanf("%zu%lld", &x, &t) == 2);        rearrange(parking_tree, x, t);  break;
-     case FETCH:      assert(scanf("%lld", &t) == 1);               fetch(parking_tree, t);         break;
-     case REBUILD:    assert(scanf("%zu%zu%lld", &x, &y, &d) == 3); rebuild(parking_tree, x, y, d); break;
+     case PARK:       assert(scanf("%d%zu%zu", &s, &x, &p) == 3);     park(parking_tree, s, x, p);    break;
+     case MOVE:       assert(scanf("%d%zu%zu", &s, &y, &p) == 3);     move(parking_tree, s, y, p);    break;
+     case CLEAR:      assert(scanf("%zu%lld", &x, &t) == 2);          clear(parking_tree, x, t);      break;
+     case REARRANGE:  assert(scanf("%zu%lld", &x, &t) == 2);          rearrange(parking_tree, x, t);  break;
+     case FETCH:      assert(scanf("%lld", &t) == 1);                 fetch(parking_tree, t);         break;
+     case REBUILD:    assert(scanf("%zu%zu%lld", &x, &y, &d) == 3);   rebuild(parking_tree, x, y, d); break;
     }
   }
 }
