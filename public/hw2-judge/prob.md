@@ -2,7 +2,7 @@
 
 - **At any time, there's only one bicycle for each student in either Shuiyuan or the parking tree.**
 - **The time $t$ in all operations are given in an strictly ascending order.**
-- **At any time, the number `p/q` can be stored in two 64-bit integers.** 
+- **At any time, the number `p/q` can be stored in two signed 64-bit integers.** 
 
 These three constraints have been added to the problem description. However, if you have already received an AC on the judge, these changes will not affect your score.
 
@@ -113,6 +113,7 @@ For each operation, output the following.
 - At any time, the number of bikes/elements in a single (parking slot/node) $x$ will not exceed $2 \times c_x$.
 - The time $t$ in all operations are given in an strictly ascending order.
 - **At any time, there's only one bicycle for each student in either Shuiyuan or the parking tree.**
+- **At any time, the number `p/q` can be stored in two signed 64-bit integers.** 
 
 For each operation:
 
