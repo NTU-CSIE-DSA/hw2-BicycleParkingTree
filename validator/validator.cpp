@@ -151,6 +151,7 @@ int main(int argc, char* argv[]) {
         ensure(cap[x] * 2 > slot_usage[x]);
         int p = inf.readInt(1, cap[x], "p[" + to_string(i) + "]");
         inf.readEoln();
+        ensure(student_location.count(s) == 0 || student_location[s] == -1);
 				
         if (slot_usage[x] >= cap[x]) {
 					rule_voilated_students.insert(s);
