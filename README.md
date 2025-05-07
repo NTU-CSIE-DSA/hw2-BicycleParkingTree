@@ -1,7 +1,7 @@
 # Solution
 
 ## Introduction
-This repository contains a C++ implementation of a Bicycle Parking Tree data structure, supporting operations to park, move, clear, rearrange, fetch, and rebuild bicycles across slots arranged in a tree. It uses:
+This repository contains a C implementation of a Bicycle Parking Tree data structure, supporting operations to park, move, clear, rearrange, fetch, and rebuild bicycles across slots arranged in a tree. It uses:
 - Heavy-Light Decomposition for fast path queries
 - Binary Indexed Tree (Fenwick) for dynamic edge-weight updates
 - Dynamic arrays and binary heaps for slot and delayed‐fetch management
